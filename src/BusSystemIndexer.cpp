@@ -67,15 +67,26 @@ struct CBusSystemIndexer::SImplementation{
     }
 
     std::shared_ptr<SStop> SortedStopByIndex(std::size_t index) const noexcept{
-        return DSortedStopsByIndex[index]; // do a check 
+        if (index >= StopCount()) {
+            return nullptr;
+        }
+        return DSortedStopsByIndex[index]; 
     }
 
     std::shared_ptr<SRoute> SortedRouteByIndex(std::size_t index) const noexcept{
-        return DSortedRoutesByIndex[index]; // do a check
+        if (index >= RouteCount()) {
+            return nullptr;
+        }
+        return DSortedRoutesByIndex[index]; 
     }
 
     std::shared_ptr<SStop> StopByNodeID(TNodeID id) const noexcept{
-        return nullptr;
+        if (DStopsByNodeID.find(id) != DStopsByNodeID.end()) { // this means, if the stop id is actually found as a key in the map
+            return DStopsByNodeID.find(id)->second;
+        }
+        else {
+            return nullptr;
+        }  
     }
 
     bool RoutesByNodeIDs(TNodeID src, TNodeID dest, std::unordered_set<std::shared_ptr<SRoute> > &routes) const noexcept{
@@ -88,7 +99,11 @@ struct CBusSystemIndexer::SImplementation{
     }
 
     bool RouteBetweenNodeIDs(TNodeID src, TNodeID dest) const noexcept{
-        return false;
+        std::unordered_set<std::shared_ptr<SRoute> > routes;
+        if (RoutesByNodeIDs(src, dest, routes) == true) {
+            return true;
+        }
+        return false; 
     }
 
 };
