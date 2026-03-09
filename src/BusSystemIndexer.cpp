@@ -7,6 +7,16 @@ struct CBusSystemIndexer::SImplementation{
     std::shared_ptr<CBusSystem> DBusSystem;
     std::vector<std::shared_ptr<SStop>> DSortedStopsByIndex;
     std::unordered_map<TNodeID,std::shared_ptr<SStop>> DStopsByNodeID;
+    std::vector<std::shared_ptr<SRoute>> DSortedRoutesByIndex;
+    
+    struct SNodeIDPairHash{
+        std::size_t operator()(const std::pair<TNodeID,TNodeID> &pair) const{
+            std::size_t First = pair.first;
+            std::size_t Second = pair.second;
+            return First ^ (Second<<1);
+        }
+    };
+    std::unordered_map<std::pair<TNodeID,TNodeID>,std::unordered_set<std::shared_ptr<SRoute>>,SNodeIDPairHash> DRoutesByNodeIDs;
 
     SImplementation(std::shared_ptr<CBusSystem> bussystem){
         DBusSystem = bussystem;
@@ -18,6 +28,30 @@ struct CBusSystemIndexer::SImplementation{
         std::sort(DSortedStopsByIndex.begin(), DSortedStopsByIndex.end(), [](std::shared_ptr<SStop> l, std::shared_ptr<SStop> r) -> bool{
             return l->ID() < r->ID();
         });
+        for(size_t Index = 0; Index < DBusSystem->RouteCount(); Index++){
+            auto Route = DBusSystem->RouteByIndex(Index);
+            DSortedRoutesByIndex.push_back(Route);
+        }
+        std::sort(DSortedRoutesByIndex.begin(), DSortedRoutesByIndex.end(), [](std::shared_ptr<SRoute> l, std::shared_ptr<SRoute> r) -> bool{
+            return l->Name() < r->Name();
+        });
+        for(auto Route: DSortedRoutesByIndex){
+            for(size_t Index = 1; Index < Route->StopCount(); Index++){
+                auto Previous = Route->GetStopID(Index-1);
+                auto Current = Route->GetStopID(Index);
+                auto FirstNodeID = DBusSystem->StopByID(Previous)->NodeID();
+                auto SecondNodeID = DBusSystem->StopByID(Current)->NodeID();
+                auto Key = std::make_pair(FirstNodeID,SecondNodeID);
+                auto Search = DRoutesByNodeIDs.find(Key);
+                if(Search == DRoutesByNodeIDs.end()){
+                    DRoutesByNodeIDs[Key] = {Route};
+                }
+                else{
+                    Search->second.insert(Route);
+                }
+            }
+        }
+
     }
 
     ~SImplementation(){
@@ -37,7 +71,7 @@ struct CBusSystemIndexer::SImplementation{
     }
 
     std::shared_ptr<SRoute> SortedRouteByIndex(std::size_t index) const noexcept{
-        return nullptr;
+        return DSortedRoutesByIndex[index]; // do a check
     }
 
     std::shared_ptr<SStop> StopByNodeID(TNodeID id) const noexcept{
@@ -45,6 +79,11 @@ struct CBusSystemIndexer::SImplementation{
     }
 
     bool RoutesByNodeIDs(TNodeID src, TNodeID dest, std::unordered_set<std::shared_ptr<SRoute> > &routes) const noexcept{
+        auto Search = DRoutesByNodeIDs.find(std::make_pair(src,dest));
+        if(Search != DRoutesByNodeIDs.end()){
+            routes = Search->second;
+            return true;
+        }
         return false;
     }
 
