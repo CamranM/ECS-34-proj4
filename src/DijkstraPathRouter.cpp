@@ -81,14 +81,14 @@ struct CDijkstraPathRouter::SImplementation{
             */
             int min_index = -1;
             for (int i = 0; i < VertexCount(); ++i) {
-                if ((min_index == -1) || (Weights[i] < Weights[min_index] && std::find(visited_set.begin(), visited_set.end(), DVertices[i]) == visited_set.end())) {
+                if ((min_index == -1 && std::find(visited_set.begin(), visited_set.end(), DVertices[i]) == visited_set.end()) || (Weights[i] < Weights[min_index] && std::find(visited_set.begin(), visited_set.end(), DVertices[i]) == visited_set.end())) {
                     min_index = i;
                 }
             }
-            if (dest == DVertices[min_index]) {
+            if (dest ==min_index) {
                 break;
             }
-            else if (DVertices[min_index] == std::numeric_limits<double>::max()) {
+            else if (Weights[min_index] == std::numeric_limits<double>::max()) {
                 break;
             }
 
@@ -111,7 +111,7 @@ struct CDijkstraPathRouter::SImplementation{
                     }
                     
                 }
-            visisted_set.push_back(DVertices[min_index]);
+            visited_set.push_back(DVertices[min_index]);
             
         }
         
