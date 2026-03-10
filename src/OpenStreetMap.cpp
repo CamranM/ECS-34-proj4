@@ -12,7 +12,7 @@ struct COpenStreetMap::SImplementation
     struct SNode : public CStreetMap::SNode
     {
         TNodeID DID;
-        TLocation DLocation;
+        CStreetMap::SLocation DLocation;
         std::vector<std::pair<std::string, std::string>> attributes;
         ~SNode() {};
         TNodeID ID() const noexcept override
@@ -20,7 +20,7 @@ struct COpenStreetMap::SImplementation
             return DID;
         }
 
-        TLocation Location() const noexcept override
+        CStreetMap::SLocation Location() const noexcept override
         {
             return DLocation;
         }
@@ -146,7 +146,7 @@ struct COpenStreetMap::SImplementation
                 auto NodeLon = std::stod(TempEntity.AttributeValue(DNodeLonAttr));
                 auto NewNode = std::make_shared<SNode>();
                 NewNode->DID = NodeID;
-                NewNode->DLocation = std::make_pair(NodeLat, NodeLon);
+                NewNode->DLocation = CStreetMap::SLocation(NodeLat, NodeLon);
                 if (NodeByID(NodeID) != nullptr)
                 {
                     return false;
