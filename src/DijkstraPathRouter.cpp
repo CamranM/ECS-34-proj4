@@ -1,14 +1,14 @@
 #include "DijkstraPathRouter.h"
-
+#include <bits/stdc++.h>
 
 struct CDijkstraPathRouter::SImplementation{
     struct SVertex;
-    using TEdge = std::pair<double,std::shared_ptr<SVertex>>;
-    struct SVertex{
+    using TEdge = std::pair<double,std::shared_ptr<SVertex>>; // contains the weight and the vertex 
+    struct SVertex{ // one vertex 
         std::vector<TEdge> DEdges;
         std::any DTag;
     };
-    std::vector<std::shared_ptr<SVertex>> DVertices;
+    std::vector<std::shared_ptr<SVertex>> DVertices; // all vertices in the graph 
 
     SImplementation(){
 
@@ -17,11 +17,14 @@ struct CDijkstraPathRouter::SImplementation{
 
     }
 
-    std::size_t VertexCount() const noexcept{
+    // each vertex contains a list of edges and a tag, and an edge is in a vector 
+    // where the edge is associated with a weight and a pointer to the vertex destintion
+
+    std::size_t VertexCount() const noexcept{ // how many vertices exist 
         return DVertices.size(); 
     }
 
-    TVertexID AddVertex(std::any tag) noexcept{
+    TVertexID AddVertex(std::any tag) noexcept{ // creates a new vertex and adds the new vertex to dvertices
         auto NewVertex = std::make_shared<SVertex>();
         NewVertex->DTag = tag;
         TVertexID NewID = DVertices.size();
@@ -29,7 +32,7 @@ struct CDijkstraPathRouter::SImplementation{
         return NewID;
     }
 
-    std::any GetVertexTag(TVertexID id) const noexcept{
+    std::any GetVertexTag(TVertexID id) const noexcept{ // gets the tag of a given vertex 
         if(id < DVertices.size()){
             return DVertices[id]->DTag;
         }
@@ -45,19 +48,19 @@ struct CDijkstraPathRouter::SImplementation{
             return true;
         }
         return false;
-        // not done 
+        // not done magnitude check 
+        // adds an edge to the 
     }
 
     bool Precompute(std::chrono::steady_clock::time_point deadline) noexcept{
-        return true; // need to check if compelete 
+        return true; // need to check  
     }
 
     double FindShortestPath(TVertexID src, TVertexID dest, std::vector<TVertexID> &path) noexcept{
         // building the graph
         
 
-
-
+        
 
         // running the algorithm 
         std::vector<double> Weights;
@@ -65,12 +68,61 @@ struct CDijkstraPathRouter::SImplementation{
         std::vector<TVertexID> Previous;
         Previous.resize(DVertices.size(),std::numeric_limits<TVertexID>::max());
 
+        Weights[src] = 0; // since the weight between src and src is 0 
+        std::vector<SVertex> visisted_set;
+
+
+        while (true) {
+            
+            /*
+            int i;
+            auto p = min_element(Weights.begin(), Weights.end());
+            i = p - Weights.begin();
+            */
+            int min_index = -1;
+            for (int i = 0; i < VertexCount(); ++i) {
+                if ((min_index == -1) || (Weights[i] < Weights[min_index] && std::find(visited_set.begin(), visited_set.end(), DVertices[i]) == visited_set.end())) {
+                    min_index = i;
+                }
+            }
+            if (dest == DVertices[min_index]) {
+                break;
+            }
+            else if (DVertices[min_index] == std::numeric_limits<double>::max()) {
+                break;
+            }
+
+
+                for (int j=0; j <  DVertices[min_index]->DEdges.size(); ++j) {
+                    double new_weight = Weights[min_index] + DVertices[min_index]->DEdges[j].first;
+                    std::shared_ptr<SVertex> curr_vertex = DVertices[min_index]->DEdges[j].second;
+                    int vertex_index;
+                    for (int k = 0; k < VertexCount(); ++k) {
+                        if (DVertices[k] == curr_vertex) {
+                            vertex_index = k; // error if its not found 
+                            break;
+                        }
+                    }
+                    if (new_weight < Weights[vertex_index]) {
+                        Weights[vertex_index] = new_weight;
+                        Previous[vertex_index] = min_index;
+                        
+                        
+                    }
+                    
+                }
+            visisted_set.push_back(DVertices[min_index]);
+            
+        }
+        
         // not done 
 
 
 
     }
 };
+
+
 
 CDijkstraPathRouter::CDijkstraPathRouter(){
     DImplementation = std::make_unique<SImplementation>();
