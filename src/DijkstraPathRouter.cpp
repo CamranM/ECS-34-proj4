@@ -1,4 +1,6 @@
 #include "DijkstraPathRouter.h"
+
+
 struct CDijkstraPathRouter::SImplementation{
     struct SVertex;
     using TEdge = std::pair<double,std::shared_ptr<SVertex>>;
@@ -16,7 +18,7 @@ struct CDijkstraPathRouter::SImplementation{
     }
 
     std::size_t VertexCount() const noexcept{
-        return DVertices.size();
+        return DVertices.size(); 
     }
 
     TVertexID AddVertex(std::any tag) noexcept{
@@ -43,18 +45,27 @@ struct CDijkstraPathRouter::SImplementation{
             return true;
         }
         return false;
+        // not done 
     }
 
     bool Precompute(std::chrono::steady_clock::time_point deadline) noexcept{
-        return true;
+        return true; // need to check if compelete 
     }
 
     double FindShortestPath(TVertexID src, TVertexID dest, std::vector<TVertexID> &path) noexcept{
+        // building the graph
+        
+
+
+
+
+        // running the algorithm 
         std::vector<double> Weights;
         Weights.resize(DVertices.size(),std::numeric_limits<double>::max());
         std::vector<TVertexID> Previous;
         Previous.resize(DVertices.size(),std::numeric_limits<TVertexID>::max());
-        
+
+        // not done 
 
 
 

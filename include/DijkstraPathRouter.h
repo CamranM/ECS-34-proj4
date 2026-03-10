@@ -4,6 +4,7 @@
 #include "PathRouter.h"
 #include <memory>
 
+
 class CDijkstraPathRouter : public CPathRouter{
     private:
         struct SImplementation;
