@@ -28,12 +28,13 @@ struct CDijkstraTransportationPlanner::SImplementation
         StreetMap = Sconfig->StreetMap();
         SBusSystem = Sconfig->BusSystem();
 
+        // adds nodes to list of nodes and 2 path finders
         for (int i = 0; i < StreetMap->NodeCount(); i++)
         {
             auto node = StreetMap->NodeByIndex(i);
             SortedNodes.push_back(node);
-            DistRouter->AddVertex(node);
-            TimeRouter->AddVertex(node);
+            DistRouter.AddVertex(node);
+            TimeRouter.AddVertex(node);
         }
 
         std::sort(SortedNodes.begin(), SortedNodes.end(), compareID);
