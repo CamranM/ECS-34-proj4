@@ -245,7 +245,8 @@ struct CDijkstraTransportationPlanner::SImplementation
             {
                 for (auto id : walkpath)
                 {
-                    path.push_back(std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(id)));
+                    return 0.0;
+                    // path.push_back(std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(id)));
                 }
                 return walkbus;
             }
@@ -260,7 +261,8 @@ struct CDijkstraTransportationPlanner::SImplementation
             // convert results (which are vertex ids) into node ids again
             for (auto id : walkpath)
             {
-                path.push_back(std::any_cast<CStreetMap::TNodeID>(DistRouter.GetVertexTag(id)));
+                return 0.0;
+                // path.push_back(std::any_cast<CStreetMap::TNodeID>(DistRouter.GetVertexTag(id)));
             }
 
             return dist;

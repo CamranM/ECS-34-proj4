@@ -40,6 +40,8 @@ TEST_CSVBSINDEX_OBJ_FILES = $(TESTOBJ_DIR)/StringDataSource.o $(TESTOBJ_DIR)/DSV
 TEST_DPR_OBJ_FILES = $(TESTOBJ_DIR)/DijkstraPathRouter.o $(TESTOBJ_DIR)/DijkstraPathRouterTest.o
 TEST_OSM_OBJ_FILES = $(TESTOBJ_DIR)/StringDataSource.o $(TESTOBJ_DIR)/XMLReader.o $(TESTOBJ_DIR)/OpenStreetMap.o $(TESTOBJ_DIR)/OSMTest.o
 TEST_DTP_OBJ_FILES = $(TESTOBJ_DIR)/GeographicUtils.o $(TESTOBJ_DIR)/DijkstraPathRouter.o $(TESTOBJ_DIR)/DSVReader.o $(TESTOBJ_DIR)/CSVBusSystem.o $(TESTOBJ_DIR)/BusSystemIndexer.o $(TESTOBJ_DIR)/StringDataSource.o $(TESTOBJ_DIR)/XMLReader.o $(TESTOBJ_DIR)/OpenStreetMap.o $(TESTOBJ_DIR)/DijkstraTransportationPlanner.o $(TESTOBJ_DIR)/CSVOSMTransportationPlannerTest.o
+TP_OBJ_FILES = $(OBJ_DIR)/StandardDataSource.o $(OBJ_DIR)/StringDataSink.o $(OBJ_DIR)/StandardErrorDataSink.o $(OBJ_DIR)/FileDataFactory.o $(OBJ_DIR)/FileDataSource.o $(OBJ_DIR)/FileDataSink.o $(OBJ_DIR)/transplanner.o $(OBJ_DIR)/TransportationPlannerCommandLine.o
+
 
 # Define the test target
 TEST_STR_TARGET	= $(TESTBIN_DIR)/teststrutils
@@ -54,9 +56,10 @@ TEST_CSVBSINDEX_TARGET = $(TESTBIN_DIR)/testcsvbsindexer
 TEST_DPR_TARGET = $(TESTBIN_DIR)/testdpr
 TEST_OSM_TARGET	= $(TESTBIN_DIR)/testosm
 TEST_DTP_TARGET	= $(TESTBIN_DIR)/testdtp
+TP_TARGET = $(BIN_DIR)/transplanner
 
 
-all: directories run_strtest run_strsrctest run_strsinktest run_filesstest run_geoutilstest run_dsvtest run_xmltest run_csvbsindextest run_dprtest run_osmtest run_dtptest gencoverage
+all: directories run_strtest run_strsrctest run_strsinktest run_filesstest run_geoutilstest run_dsvtest run_xmltest run_csvbsindextest run_dprtest run_osmtest run_dtptest $(TP_TARGET) gencoverage
 
 run_strtest: $(TEST_STR_TARGET)
 	$(TEST_STR_TARGET) --gtest_output=xml:$(TESTTMP_DIR)/$@
@@ -106,6 +109,7 @@ run_dtptest: $(TEST_DTP_TARGET)
 	$(TEST_DTP_TARGET) --gtest_output=xml:$(TESTTMP_DIR)/$@
 	mv $(TESTTMP_DIR)/$@ $@
 
+
 gencoverage:
 	lcov --capture --directory . --output-file $(TESTCOVER_DIR)/coverage.info --ignore-errors inconsistent,source
 	lcov --remove $(TESTCOVER_DIR)/coverage.info '/usr/*' '*/testsrc/*' --output-file $(TESTCOVER_DIR)/coverage.info
@@ -147,11 +151,17 @@ $(TEST_OSM_TARGET): $(TEST_OSM_OBJ_FILES)
 $(TEST_DTP_TARGET): $(TEST_DTP_OBJ_FILES)
 	$(CXX) $(TEST_CFLAGS) $(TEST_CPPFLAGS) $(TEST_DTP_OBJ_FILES) $(TEST_LDFLAGS) -o $(TEST_DTP_TARGET)
 
+$(TP_TARGET): $(TP_OBJ_FILES)
+	$(CXX) $(CFLAGS) $(CPPFLAGS) $(TP_OBJ_FILES) $(TEST_LDFLAGS) -o $(TEST_DTP_TARGET)
+
 $(TESTOBJ_DIR)/%.o: $(TESTSRC_DIR)/%.cpp
 	$(CXX) $(TEST_CFLAGS) $(TEST_CPPFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
 
 $(TESTOBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(TEST_CFLAGS) $(TEST_CPPFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CFLAGS) $(CPPFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
 
 .PHONY: directories
 directories:
