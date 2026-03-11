@@ -40,6 +40,9 @@ struct CDijkstraPathRouter::SImplementation{
     }
 
     bool AddEdge(TVertexID src, TVertexID dest, double weight, bool bidir = false) noexcept{
+        if (weight < 0) {
+            return false;
+        }
         if(src < DVertices.size() && dest < DVertices.size()){
             DVertices[src]->DEdges.push_back(std::make_pair(weight,DVertices[dest]));
             if(bidir){
@@ -53,14 +56,11 @@ struct CDijkstraPathRouter::SImplementation{
     }
 
     bool Precompute(std::chrono::steady_clock::time_point deadline) noexcept{
-        return true; // need to check  
+        return true; // for extra credit   
     }
 
     double FindShortestPath(TVertexID src, TVertexID dest, std::vector<TVertexID> &path) noexcept{
         // building the graph
-        
-
-        
 
         // running the algorithm 
         std::vector<double> Weights;
@@ -71,7 +71,7 @@ struct CDijkstraPathRouter::SImplementation{
         Weights[src] = 0; // since the weight between src and src is 0 
         std::vector<SVertex> visisted_set;
 
-
+        int dest_index;
         while (true) {
             
             /*
@@ -79,47 +79,59 @@ struct CDijkstraPathRouter::SImplementation{
             auto p = min_element(Weights.begin(), Weights.end());
             i = p - Weights.begin();
             */
+            
             int min_index = -1;
             for (int i = 0; i < VertexCount(); ++i) {
                 if ((min_index == -1 && std::find(visited_set.begin(), visited_set.end(), DVertices[i]) == visited_set.end()) || (Weights[i] < Weights[min_index] && std::find(visited_set.begin(), visited_set.end(), DVertices[i]) == visited_set.end())) {
                     min_index = i;
                 }
             }
-            if (dest ==min_index) {
-                break;
+            if (dest == min_index) {
+                dest_index = min_index;
+                break; // found the lowest cost path 
             }
             else if (Weights[min_index] == std::numeric_limits<double>::max()) {
-                break;
+                // break; // no path to dest exists 
+                return NoPathExists;
+            }
+            else if (min_index == -1) {
+                return NoPathExists; // nothing left 
             }
 
 
-                for (int j=0; j <  DVertices[min_index]->DEdges.size(); ++j) {
-                    double new_weight = Weights[min_index] + DVertices[min_index]->DEdges[j].first;
-                    std::shared_ptr<SVertex> curr_vertex = DVertices[min_index]->DEdges[j].second;
-                    int vertex_index;
-                    for (int k = 0; k < VertexCount(); ++k) {
-                        if (DVertices[k] == curr_vertex) {
-                            vertex_index = k; // error if its not found 
-                            break;
-                        }
+            for (int j=0; j <  DVertices[min_index]->DEdges.size(); ++j) {
+                double new_weight = Weights[min_index] + DVertices[min_index]->DEdges[j].first;
+                std::shared_ptr<SVertex> curr_vertex = DVertices[min_index]->DEdges[j].second;
+                int vertex_index;
+                for (int k = 0; k < VertexCount(); ++k) {
+                    if (DVertices[k] == curr_vertex) {
+                        vertex_index = k; // error if its not found 
+                        break;
                     }
-                    if (new_weight < Weights[vertex_index]) {
-                        Weights[vertex_index] = new_weight;
-                        Previous[vertex_index] = min_index;
-                        
-                        
-                    }
-                    
                 }
+                if (new_weight < Weights[vertex_index]) {
+                    Weights[vertex_index] = new_weight;
+                    Previous[vertex_index] = min_index;      
+                }
+                    
+            }
             visited_set.push_back(DVertices[min_index]);
             
         }
         
-        // not done 
-
-
-
+    double total_weight = 0;
+    total_weight = total_weight +  Weights[dest_index];
+    int curr_index = dest_index;
+    while (true) {
+        if (Previous[curr_index] == 0) {
+            break;
+        }
+        total_weight = total_weight +  Weights[Previous[curr_index]];
     }
+
+    return total_weight;
+    }
+    
 };
 
 
