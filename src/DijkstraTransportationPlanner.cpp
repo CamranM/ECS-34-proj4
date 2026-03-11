@@ -89,7 +89,8 @@ struct CDijkstraTransportationPlanner::SImplementation
 
                 std::vector<CDijkstraPathRouter::TVertexID> path;
                 double dist = DistRouter.FindShortestPath(firststop, secondstop, path);
-                WBTimeRouter.AddEdge(firststop, secondstop, dist / Sconfig->DDefaultSpeedLimit);
+                // try 30 seconds if not 30 minutes
+                WBTimeRouter.AddEdge(firststop, secondstop, (dist / Sconfig->DDefaultSpeedLimit) + 30);
             }
         }
     }
