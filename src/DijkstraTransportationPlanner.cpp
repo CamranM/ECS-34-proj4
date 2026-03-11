@@ -51,6 +51,8 @@ struct CDijkstraTransportationPlanner::SImplementation
     std::unordered_map<nodeID, std::vector<way>> path_detail;
     std::shared_ptr<CBusSystemIndexer> busindex;
     std::unordered_map<CStreetMap::TNodeID, CDijkstraPathRouter::TVertexID> node_to_vertex;
+    std::unordered_map<CStreetMap::TNodeID, CDijkstraPathRouter::TVertexID> node_to_vertex_walk;
+    std::unordered_map<CStreetMap::TNodeID, CDijkstraPathRouter::TVertexID> node_to_vertex_bike;
 
     static bool compareID(const std::shared_ptr<CStreetMap::SNode> &a, const std::shared_ptr<CStreetMap::SNode> &b)
     {
@@ -72,8 +74,8 @@ struct CDijkstraTransportationPlanner::SImplementation
             // std::cout << "Node: " << node->ID() << std::endl;
             node_to_vertex[node->ID()] = DistRouter.AddVertex(node->ID());
 
-            BikeTimeRouter.AddVertex(node->ID());
-            WBTimeRouter.AddVertex(node->ID());
+            node_to_vertex_bike[node->ID()] = BikeTimeRouter.AddVertex(node->ID());
+            node_to_vertex_walk[node->ID()] = WBTimeRouter.AddVertex(node->ID());
         }
 
         std::sort(SortedNodes.begin(), SortedNodes.end(), compareID);
@@ -99,10 +101,10 @@ struct CDijkstraTransportationPlanner::SImplementation
 
                 double distance = SGeographicUtils::HaversineDistanceInMiles(firstloc, secondloc);
                 DistRouter.AddEdge(node_to_vertex[firstID], node_to_vertex[secondID], distance, !(way->HasAttribute("oneway")));
-                WBTimeRouter.AddEdge(node_to_vertex[firstID], node_to_vertex[secondID], distance / Sconfig->DWalkSpeed, true); // can always walk both ways
-                if (!(way->GetAttribute("bicyle") == "no" || way->GetAttribute("oneway:bicyle") == "no"))                      // if bikes allowed
+                WBTimeRouter.AddEdge(node_to_vertex_walk[firstID], node_to_vertex_walk[secondID], distance / Sconfig->DWalkSpeed, true); // can always walk both ways
+                if (!(way->GetAttribute("bicyle") == "no"))                                                                              // if bikes allowed
                 {
-                    BikeTimeRouter.AddEdge(node_to_vertex[firstID], node_to_vertex[secondID], distance / Sconfig->DBikeSpeed, true);
+                    BikeTimeRouter.AddEdge(node_to_vertex_bike[firstID], node_to_vertex_bike[secondID], distance / Sconfig->DBikeSpeed, !(way->GetAttribute("oneway:bicyle") == "no"));
                 }
             }
         }
@@ -209,9 +211,10 @@ struct CDijkstraTransportationPlanner::SImplementation
             // printf("sohere");
             path.clear();
 
-            std::vector<TNodeID> result;
+            std::vector<CDijkstraPathRouter::TVertexID> result;
             double dist = DistRouter.FindShortestPath(node_to_vertex[src], node_to_vertex[dest], result);
 
+            // convert results (which are vertex ids) into node ids again
             for (auto id : result)
             {
                 path.push_back(std::any_cast<CStreetMap::TNodeID>(DistRouter.GetVertexTag(id)));
@@ -225,19 +228,45 @@ struct CDijkstraTransportationPlanner::SImplementation
 
     double FindFastestPath(TNodeID src, TNodeID dest, std::vector<TTripStep> &path)
     {
-        if (node_to_vertex.count(src) > 0 && node_to_vertex.count(dest) > 0)
-        {
-            std::vector<CDijkstraPathRouter::TVertexID> walkpath;
-            std::vector<CDijkstraPathRouter::TVertexID> bikepath;
+        bool walk_exist = node_to_vertex_walk.count(src) > 0 && node_to_vertex_walk.count(dest) > 0;
+        bool bike_exist = node_to_vertex_bike.count(src) > 0 && node_to_vertex_bike.count(dest) > 0;
 
-            double walkbus = WBTimeRouter.FindShortestPath(node_to_vertex[src], node_to_vertex[dest], walkpath);
-            double bike = BikeTimeRouter.FindShortestPath(node_to_vertex[src], node_to_vertex[dest], bikepath);
+        std::vector<CDijkstraPathRouter::TVertexID> walkpath;
+        std::vector<CDijkstraPathRouter::TVertexID> bikepath;
+        path.clear();
+
+        if (walk_exist && bike_exist)
+        {
+
+            double walkbus = WBTimeRouter.FindShortestPath(node_to_vertex_walk[src], node_to_vertex_walk[dest], walkpath);
+            double bike = BikeTimeRouter.FindShortestPath(node_to_vertex_bike[src], node_to_vertex_bike[dest], bikepath);
+
             if (walkbus < bike)
             {
+                for (auto id : walkpath)
+                {
+                    path.push_back(std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(id)));
+                }
                 return walkbus;
             }
 
             return bike;
+        }
+        else if (walk_exist)
+        {
+            // std::vector<CDijkstraPathRouter::TVertexID> walk;
+            double dist = WBTimeRouter.FindShortestPath(node_to_vertex_walk[src], node_to_vertex_walk[dest], walkpath);
+
+            // convert results (which are vertex ids) into node ids again
+            for (auto id : walkpath)
+            {
+                path.push_back(std::any_cast<CStreetMap::TNodeID>(DistRouter.GetVertexTag(id)));
+            }
+
+            return dist;
+        }
+        else
+        {
         }
         printf("prinitng here fast");
         return CPathRouter::NoPathExists;
