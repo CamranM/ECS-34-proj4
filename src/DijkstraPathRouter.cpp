@@ -1,5 +1,5 @@
 #include "DijkstraPathRouter.h"
-#include <bits/stdc++.h>
+#include <algorithm>
 
 struct CDijkstraPathRouter::SImplementation
 {
@@ -81,7 +81,7 @@ struct CDijkstraPathRouter::SImplementation
         Previous.resize(DVertices.size(), std::numeric_limits<TVertexID>::max());
 
         Weights[src] = 0; // since the weight between src and src is 0
-        std::vector<SVertex> visited_set;
+        std::vector<std::shared_ptr<SVertex>> visited_set;
 
         int dest_index;
         while (true)
@@ -138,19 +138,23 @@ struct CDijkstraPathRouter::SImplementation
             visited_set.push_back(DVertices[min_index]);
         }
 
-        double total_weight = 0;
-        total_weight = total_weight + Weights[dest_index];
+        // path part
+        path.insert(path.begin(), dest_index);
         int curr_index = dest_index;
         while (true)
         {
             if (Previous[curr_index] == 0)
             {
+                curr_index = Previous[curr_index];
                 break;
             }
-            total_weight = total_weight + Weights[Previous[curr_index]];
+            path.insert(path.begin(), Previous[curr_index]);
+            curr_index = Previous[curr_index];
         }
+        path.insert(path.begin(), curr_index);
+        // weight part
 
-        return total_weight;
+        return Weights[dest_index];
     }
 };
 

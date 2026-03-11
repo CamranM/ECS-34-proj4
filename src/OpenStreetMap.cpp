@@ -166,7 +166,6 @@ struct COpenStreetMap::SImplementation
                 auto NodeLat = std::stod(TempEntity.AttributeValue(DNodeLatAttr));
                 auto NodeLon = std::stod(TempEntity.AttributeValue(DNodeLonAttr));
                 auto NewNode = std::make_shared<SNode>();
-                std::cout << NodeID << std::endl;
 
                 NewNode->DID = NodeID;
                 CStreetMap::SLocation Location = CStreetMap::SLocation(NodeLat, NodeLon);
