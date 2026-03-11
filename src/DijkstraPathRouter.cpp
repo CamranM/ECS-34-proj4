@@ -1,6 +1,8 @@
 #include "DijkstraPathRouter.h"
 #include <algorithm>
 
+#include <iostream>
+
 struct CDijkstraPathRouter::SImplementation
 {
     struct SVertex;
@@ -24,11 +26,19 @@ struct CDijkstraPathRouter::SImplementation
 
     std::size_t VertexCount() const noexcept
     { // how many vertices exist
+        printf("Listing nodes: \n");
+        // for (auto node : DVertices)
+        // {
+        //     std::cout << "Vertex id: " << node->DTag << "\n"
+        //               << std::endl;
+        // }
         return DVertices.size();
     }
 
     TVertexID AddVertex(std::any tag) noexcept
     { // creates a new vertex and adds the new vertex to dvertices
+        std::cout << "Creating new vertex: " << DVertices.size() << "\n"
+                  << std::endl;
         auto NewVertex = std::make_shared<SVertex>();
         NewVertex->DTag = tag;
         TVertexID NewID = DVertices.size();
@@ -42,6 +52,7 @@ struct CDijkstraPathRouter::SImplementation
         {
             return DVertices[id]->DTag;
         }
+        printf("noway");
         return std::any();
     }
 
@@ -80,7 +91,7 @@ struct CDijkstraPathRouter::SImplementation
         std::vector<TVertexID> Previous;
         Previous.resize(DVertices.size(), std::numeric_limits<TVertexID>::max());
 
-        Weights[src] = 0; // since the weight between src and src is 0 
+        Weights[src] = 0; // since the weight between src and src is 0
         std::vector<std::shared_ptr<SVertex>> visited_set;
 
         int dest_index;
@@ -137,22 +148,24 @@ struct CDijkstraPathRouter::SImplementation
             }
             visited_set.push_back(DVertices[min_index]);
         }
-        
-    // path part  
-    path.insert(path.begin(), dest_index);
-    int curr_index = dest_index;
-    while (true) {
-        if (Previous[curr_index] == 0) { // potential error 
-            curr_index = Previous[curr_index];
-            break;
-        }
-        path.insert(path.begin(), Previous[curr_index]);
-        curr_index = Previous[curr_index];
-    }
-    path.insert(path.begin(), curr_index);
-    // weight part 
 
-    return Weights[dest_index];
+        // path part
+        path.insert(path.begin(), dest_index);
+        int curr_index = dest_index;
+        while (true)
+        {
+            if (Previous[curr_index] == 0)
+            { // potential error
+                curr_index = Previous[curr_index];
+                break;
+            }
+            path.insert(path.begin(), Previous[curr_index]);
+            curr_index = Previous[curr_index];
+        }
+        path.insert(path.begin(), curr_index);
+        // weight part
+
+        return Weights[dest_index];
     }
 };
 
