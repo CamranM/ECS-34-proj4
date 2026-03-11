@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="1" failures="0" disabled="0" errors="0" time="0." timestamp="2026-03-10T22:23:36.874" name="AllTests">
-  <testsuite name="GeographicUtils" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-03-10T22:23:36.874">
-    <testcase name="SimpleTest" file="testsrc/GeographicUtilsTest.cpp" line="4" status="run" result="completed" time="0." timestamp="2026-03-10T22:23:36.874" classname="GeographicUtils" />
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-03-11T05:56:24.935" name="AllTests">
+  <testsuite name="GeographicUtils" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-03-11T05:56:24.935">
+    <testcase name="SimpleTest" file="testsrc/GeographicUtilsTest.cpp" line="4" status="run" result="completed" time="0.001" timestamp="2026-03-11T05:56:24.935" classname="GeographicUtils" />
   </testsuite>
 </testsuites>

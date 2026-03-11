@@ -9,8 +9,8 @@ TEST(OSMTest, SimpleFiles)
                                                              "  <node id=\"1\" lat=\"38.5\" lon=\"-121.7\"/>\n"
                                                              "  <node id=\"2\" lat=\"38.5\" lon=\"-121.8\"/>\n"
                                                              "  <way id=\"100\">\n"
-                                                             "    <nd ref=\"1\"/>\n"
-                                                             "    <nd ref=\"2\"/>\n"
+                                                             "    <nd ref=\"258592863\"/>\n"
+                                                             "    <nd ref=\"4399281377\"/>\n"
                                                              "  </way>\n"
                                                              "</osm>");
     auto OSMReader = std::make_shared<CXMLReader>(OSMDataSource);
@@ -27,7 +27,9 @@ TEST(OSMTest, SimpleFiles)
     ASSERT_NE(TempNode, nullptr);
     EXPECT_EQ(TempNode, OpenStreetMap.NodeByID(TempNode->ID()));
     EXPECT_EQ(TempNode->ID(), 1);
-    EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.7));
+    auto TempLocation = CStreetMap::SLocation{38.5, -121.7};
+    EXPECT_EQ(TempNode->Location().DLatitude, 38.5);
+    EXPECT_EQ(TempNode->Location(), TempLocation);
 }
 
 // testing formatting
@@ -108,7 +110,8 @@ TEST(OSMTest, MissingOneOsm)
     ASSERT_NE(TempNode, nullptr);
     EXPECT_EQ(TempNode, OpenStreetMap.NodeByID(TempNode->ID()));
     EXPECT_EQ(TempNode->ID(), 1);
-    EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.7));
+    auto TempLocation = CStreetMap::SLocation{38.5, -121.7};
+    EXPECT_EQ(TempNode->Location(), TempLocation);
 
     auto OSMDataSource2 = std::make_shared<CStringDataSource>("  <node id=\"1\" lat=\"38.5\" lon=\"-121.7\"/>\n"
                                                               "  <node id=\"2\" lat=\"38.5\" lon=\"-121.8\"/>\n"
@@ -151,7 +154,10 @@ TEST(OSMTest, OnlyNodes)
     ASSERT_NE(TempNode, nullptr);
     EXPECT_EQ(TempNode, OpenStreetMap.NodeByID(TempNode->ID()));
     EXPECT_EQ(TempNode->ID(), 1);
-    EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.7));
+    auto TempLocation = CStreetMap::SLocation{38.5, -121.7};
+    EXPECT_EQ(TempNode->Location(), TempLocation);
+
+    // EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.7));
 
     auto TempWay = OpenStreetMap.WayByIndex(0);
     ASSERT_EQ(TempWay, nullptr);
@@ -208,7 +214,10 @@ TEST(OSMTest, WayRefNonExistantNode)
     ASSERT_NE(TempNode, nullptr);
     EXPECT_EQ(TempNode, OpenStreetMap.NodeByID(TempNode->ID()));
     EXPECT_EQ(TempNode->ID(), 1);
-    EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.7));
+    auto TempLocation = CStreetMap::SLocation{38.5, -121.7};
+    EXPECT_EQ(TempNode->Location(), TempLocation);
+
+    // EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.7));
 
     auto TempWay = OpenStreetMap.WayByIndex(0);
     ASSERT_EQ(TempWay, nullptr);
@@ -244,7 +253,10 @@ TEST(OSMTest, NodeWithTags)
     ASSERT_NE(TempNode, nullptr);
     EXPECT_EQ(TempNode, OpenStreetMap.NodeByID(TempNode->ID()));
     EXPECT_EQ(TempNode->ID(), 1);
-    EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.7));
+    auto TempLocation = CStreetMap::SLocation{38.5, -121.7};
+    EXPECT_EQ(TempNode->Location(), TempLocation);
+
+    // EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.7));
 
     auto TempNode2 = OpenStreetMap.NodeByIndex(1);
     ASSERT_NE(TempNode2, nullptr);
@@ -302,7 +314,10 @@ TEST(OSMTest, WayWithTags)
     ASSERT_NE(TempNode, nullptr);
     EXPECT_EQ(TempNode, OpenStreetMap.NodeByID(TempNode->ID()));
     EXPECT_EQ(TempNode->ID(), 2);
-    EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.8));
+    auto TempLocation = CStreetMap::SLocation{38.5, -121.7};
+    EXPECT_EQ(TempNode->Location(), TempLocation);
+
+    // EXPECT_EQ(TempNode->Location(), std::make_pair(38.5, -121.8));
 
     auto TempWay = OpenStreetMap.WayByIndex(0);
     ASSERT_NE(TempWay, nullptr);
