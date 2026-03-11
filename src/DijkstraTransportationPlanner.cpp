@@ -224,7 +224,7 @@ struct CDijkstraTransportationPlanner::SImplementation
         }
         printf("prinitng here short");
         return CPathRouter::NoPathExists;
-    };
+    }
 
     double FindFastestPath(TNodeID src, TNodeID dest, std::vector<TTripStep> &path)
     {
@@ -235,51 +235,86 @@ struct CDijkstraTransportationPlanner::SImplementation
         std::vector<CDijkstraPathRouter::TVertexID> bikepath;
         path.clear();
 
-        if (walk_exist && bike_exist)
+        double walkbus;
+        double bike;
+
+        bool walk_chosen = false;
+
+        if (walk_exist && bike_exist) // if both exist, calculate both
         {
-
-            double walkbus = WBTimeRouter.FindShortestPath(node_to_vertex_walk[src], node_to_vertex_walk[dest], walkpath);
-            double bike = BikeTimeRouter.FindShortestPath(node_to_vertex_bike[src], node_to_vertex_bike[dest], bikepath);
-
-            if (walkbus < bike)
-            {
-                for (auto id : walkpath)
-                {
-                    return 0.0;
-                    // path.push_back(std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(id)));
-                }
-                return walkbus;
-            }
-
-            return bike;
+            walkbus = WBTimeRouter.FindShortestPath(node_to_vertex_walk[src], node_to_vertex_walk[dest], walkpath);
+            bike = BikeTimeRouter.FindShortestPath(node_to_vertex_bike[src], node_to_vertex_bike[dest], bikepath);
+            walk_chosen = walk_exist < bike_exist;
         }
-        else if (walk_exist)
+        else if (walk_exist) // only walk/bus
         {
-            // std::vector<CDijkstraPathRouter::TVertexID> walk;
-            double dist = WBTimeRouter.FindShortestPath(node_to_vertex_walk[src], node_to_vertex_walk[dest], walkpath);
-
-            // convert results (which are vertex ids) into node ids again
-            for (auto id : walkpath)
-            {
-                return 0.0;
-                // path.push_back(std::any_cast<CStreetMap::TNodeID>(DistRouter.GetVertexTag(id)));
-            }
-
-            return dist;
+            walkbus = WBTimeRouter.FindShortestPath(node_to_vertex_walk[src], node_to_vertex_walk[dest], walkpath);
+            walk_chosen = true;
+        }
+        else if (bike_exist)
+        { // only bike
+            bike = BikeTimeRouter.FindShortestPath(node_to_vertex_bike[src], node_to_vertex_bike[dest], bikepath);
         }
         else
         {
+            return CPathRouter::NoPathExists;
         }
-        printf("prinitng here fast");
-        return CPathRouter::NoPathExists;
-    };
+
+        if (walk_chosen)
+        {
+            auto mode = CTransportationPlanner::ETransportationMode::Walk;
+            // bool route_exists;
+            // route_exists = busindex->RouteBetweenNodeIDs(std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[0])), std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[1])));
+            // starting node
+            auto step = CTransportationPlanner::TTripStep{mode, std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[0]))};
+            path.push_back(step);
+
+            for (size_t i = 0; i < walkpath.size() - 1; i++)
+            {
+                bool route_exists;
+                route_exists = busindex->RouteBetweenNodeIDs(std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[i])), std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[i + 1])));
+                // if a bus route exists, take the bus (still need to implement what specific route)
+                if (route_exists)
+                {
+                    mode = CTransportationPlanner::ETransportationMode::Bus;
+                    step = CTransportationPlanner::TTripStep{mode, std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[i + 1]))};
+                    path.push_back(step);
+                }
+                else
+                {
+                    mode = CTransportationPlanner::ETransportationMode::Walk;
+                    step = CTransportationPlanner::TTripStep{mode, std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[i + 1]))};
+                    path.push_back(step);
+                }
+            }
+            step = CTransportationPlanner::TTripStep{mode, std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath.back()))};
+            path.push_back(step);
+            return walkbus;
+        }
+
+        auto mode = CTransportationPlanner::ETransportationMode::Bike;
+        // bool route_exists;
+        // route_exists = busindex->RouteBetweenNodeIDs(std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[0])), std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath[1])));
+        // starting node
+        auto step = CTransportationPlanner::TTripStep{mode, std::any_cast<CStreetMap::TNodeID>(BikeTimeRouter.GetVertexTag(bikepath[0]))};
+        path.push_back(step);
+
+        for (size_t i = 1; i < bikepath.size(); i++)
+        {
+
+            step = CTransportationPlanner::TTripStep{mode, std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(bikepath[i]))};
+            path.push_back(step);
+        }
+        // auto step = CTransportationPlanner::TTripStep{mode, std::any_cast<CStreetMap::TNodeID>(WBTimeRouter.GetVertexTag(walkpath.back()))};
+        // path.push_back(step);
+        return bike;
+    }
 
     bool GetPathDescription(const std::vector<TTripStep> &path, std::vector<std::string> &desc) const
     {
         return 0.0;
-    };
+    }
 };
-
 CDijkstraTransportationPlanner::CDijkstraTransportationPlanner(std::shared_ptr<SConfiguration> config)
 {
     DImplementation = std::make_unique<SImplementation>(config);

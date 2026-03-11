@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="6" failures="0" disabled="0" errors="0" time="0.011" timestamp="2026-03-11T18:02:51.572" name="AllTests">
-  <testsuite name="OSMTest" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.011" timestamp="2026-03-11T18:02:51.572">
-    <testcase name="SimpleTest" file="testsrc/OSMTest.cpp" line="6" status="run" result="completed" time="0." timestamp="2026-03-11T18:02:51.572" classname="OSMTest" />
-    <testcase name="SimpleNodeTest" file="testsrc/OSMTest.cpp" line="18" status="run" result="completed" time="0." timestamp="2026-03-11T18:02:51.573" classname="OSMTest" />
-    <testcase name="NodeTest" file="testsrc/OSMTest.cpp" line="50" status="run" result="completed" time="0." timestamp="2026-03-11T18:02:51.573" classname="OSMTest" />
-    <testcase name="SimpleWayTest" file="testsrc/OSMTest.cpp" line="85" status="run" result="completed" time="0." timestamp="2026-03-11T18:02:51.573" classname="OSMTest" />
-    <testcase name="WayTest" file="testsrc/OSMTest.cpp" line="120" status="run" result="completed" time="0." timestamp="2026-03-11T18:02:51.573" classname="OSMTest" />
-    <testcase name="ErrorTet" file="testsrc/OSMTest.cpp" line="153" status="run" result="completed" time="0.01" timestamp="2026-03-11T18:02:51.573" classname="OSMTest" />
+<testsuites tests="6" failures="0" disabled="0" errors="0" time="0.003" timestamp="2026-03-11T18:18:32.630" name="AllTests">
+  <testsuite name="OSMTest" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.003" timestamp="2026-03-11T18:18:32.630">
+    <testcase name="SimpleTest" file="testsrc/OSMTest.cpp" line="6" status="run" result="completed" time="0." timestamp="2026-03-11T18:18:32.630" classname="OSMTest" />
+    <testcase name="SimpleNodeTest" file="testsrc/OSMTest.cpp" line="18" status="run" result="completed" time="0." timestamp="2026-03-11T18:18:32.630" classname="OSMTest" />
+    <testcase name="NodeTest" file="testsrc/OSMTest.cpp" line="50" status="run" result="completed" time="0." timestamp="2026-03-11T18:18:32.630" classname="OSMTest" />
+    <testcase name="SimpleWayTest" file="testsrc/OSMTest.cpp" line="85" status="run" result="completed" time="0." timestamp="2026-03-11T18:18:32.630" classname="OSMTest" />
+    <testcase name="WayTest" file="testsrc/OSMTest.cpp" line="120" status="run" result="completed" time="0." timestamp="2026-03-11T18:18:32.630" classname="OSMTest" />
+    <testcase name="ErrorTet" file="testsrc/OSMTest.cpp" line="153" status="run" result="completed" time="0.002" timestamp="2026-03-11T18:18:32.631" classname="OSMTest" />
   </testsuite>
 </testsuites>
