@@ -1,6 +1,9 @@
 #include "OpenStreetMap.h"
 #include <unordered_map>
 
+#include <iostream>
+#include <string>
+
 struct COpenStreetMap::SImplementation
 {
     const std::string DOSMTag = "osm";
@@ -141,12 +144,33 @@ struct COpenStreetMap::SImplementation
             // if the entitiy is a node
             if (TempEntity.DType == SXMLEntity::EType::StartElement && TempEntity.DNameData == DNodeTag)
             {
+                std::string node = TempEntity.AttributeValue(DNodeIDAttr);
+                std::string lat = TempEntity.AttributeValue(DNodeLatAttr);
+                std::string lon = TempEntity.AttributeValue(DNodeLonAttr);
+                if (node.empty() || lat.empty() || lon.empty())
+                {
+                    return false;
+                }
+                try // checking if its valid
+                {
+                    auto NodeID = std::stoull(TempEntity.AttributeValue(DNodeIDAttr));
+                    auto NodeLat = std::stod(TempEntity.AttributeValue(DNodeLatAttr));
+                    auto NodeLon = std::stod(TempEntity.AttributeValue(DNodeLonAttr));
+                }
+                catch (const std::exception &e)
+                {
+                    return false;
+                }
+
                 auto NodeID = std::stoull(TempEntity.AttributeValue(DNodeIDAttr));
                 auto NodeLat = std::stod(TempEntity.AttributeValue(DNodeLatAttr));
                 auto NodeLon = std::stod(TempEntity.AttributeValue(DNodeLonAttr));
                 auto NewNode = std::make_shared<SNode>();
+                std::cout << NodeID << std::endl;
+
                 NewNode->DID = NodeID;
-                NewNode->DLocation = CStreetMap::SLocation(NodeLat, NodeLon);
+                CStreetMap::SLocation Location = CStreetMap::SLocation(NodeLat, NodeLon);
+                NewNode->DLocation = Location;
                 if (NodeByID(NodeID) != nullptr)
                 {
                     return false;
@@ -158,8 +182,19 @@ struct COpenStreetMap::SImplementation
                     // start of new tag, add that to attributes
                     if (TempEntity.DType == SXMLEntity::EType::StartElement && TempEntity.DNameData == "tag")
                     {
+
                         auto k = std::string(TempEntity.AttributeValue("k"));
                         auto v = std::string(TempEntity.AttributeValue("v"));
+
+                        if (k.empty() || v.empty())
+                        {
+                            k = std::string(TempEntity.AttributeValue("key"));
+                            v = std::string(TempEntity.AttributeValue("value"));
+                            if (k.empty() || v.empty())
+                            {
+                                return false;
+                            }
+                        }
                         if (NewNode->HasAttribute(k))
                         {
                             return false;
@@ -235,6 +270,19 @@ struct COpenStreetMap::SImplementation
             // if the element is a start element way tag
             if (TempEntity.DType == SXMLEntity::EType::StartElement && TempEntity.DNameData == "way")
             {
+                std::string check = TempEntity.AttributeValue(DNodeIDAttr);
+                if (check.empty())
+                {
+                    return false;
+                }
+                try // checking if its valid
+                {
+                    auto wayID = std::stoull(TempEntity.AttributeValue(DNodeIDAttr));
+                }
+                catch (const std::exception &e)
+                {
+                    return false;
+                }
                 auto wayID = std::stoull(TempEntity.AttributeValue(DNodeIDAttr));
                 auto NewWay = std::make_shared<SWay>();
                 NewWay->SWayID = wayID;
@@ -248,6 +296,19 @@ struct COpenStreetMap::SImplementation
                     // if the element is a nd
                     if (TempEntity.DType == SXMLEntity::EType::StartElement && TempEntity.DNameData == "nd")
                     {
+                        std::string check = TempEntity.AttributeValue("ref");
+                        if (check.empty())
+                        {
+                            return false;
+                        }
+                        try // checking if its valid
+                        {
+                            auto r = std::stoull(TempEntity.AttributeValue("ref"));
+                        }
+                        catch (const std::exception &e)
+                        {
+                            return false;
+                        }
                         auto r = std::stoull(TempEntity.AttributeValue("ref"));
                         if (NodeByID(r) == nullptr)
                         {
@@ -259,6 +320,7 @@ struct COpenStreetMap::SImplementation
                         {
                             if (TempEntity.DType != SXMLEntity::EType::EndElement || TempEntity.DNameData != "nd")
                             {
+
                                 return false;
                             }
                         }
@@ -272,11 +334,20 @@ struct COpenStreetMap::SImplementation
                     {
                         auto k = std::string(TempEntity.AttributeValue("k"));
                         auto v = std::string(TempEntity.AttributeValue("v"));
-                        if (NewWay->HasAttribute(k))
+                        if (k.empty() || v.empty())
                         {
-                            return false;
+                            k = std::string(TempEntity.AttributeValue("key"));
+                            v = std::string(TempEntity.AttributeValue("value"));
+                            if (k.empty() || v.empty())
+                            {
+                                return false;
+                            }
                         }
-                        NewWay->Sattributes.push_back(std::make_pair(k, v));
+
+                        if (!(NewWay->HasAttribute(k)))
+                        {
+                            NewWay->Sattributes.push_back(std::make_pair(k, v));
+                        }
 
                         // check that the next element is a closing tag
                         if (src->ReadEntity(TempEntity, true))
@@ -303,6 +374,7 @@ struct COpenStreetMap::SImplementation
                         return false;
                     }
                 }
+
                 DWayByIndex.push_back(NewWay);
                 DWayByID[wayID] = NewWay;
             }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="3" failures="0" disabled="0" errors="0" time="0.023" timestamp="2026-03-10T09:07:27.563" name="AllTests">
-  <testsuite name="FileDataSourceSink" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.023" timestamp="2026-03-10T09:07:27.563">
-    <testcase name="EmptyTest" file="testsrc/FileDataSSTest.cpp" line="11" status="run" result="completed" time="0.01" timestamp="2026-03-10T09:07:27.563" classname="FileDataSourceSink" />
-    <testcase name="PutTest" file="testsrc/FileDataSSTest.cpp" line="22" status="run" result="completed" time="0.003" timestamp="2026-03-10T09:07:27.574" classname="FileDataSourceSink" />
-    <testcase name="WriteTest" file="testsrc/FileDataSSTest.cpp" line="41" status="run" result="completed" time="0.009" timestamp="2026-03-10T09:07:27.577" classname="FileDataSourceSink" />
+<testsuites tests="3" failures="0" disabled="0" errors="0" time="0.009" timestamp="2026-03-11T04:11:15.494" name="AllTests">
+  <testsuite name="FileDataSourceSink" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.009" timestamp="2026-03-11T04:11:15.494">
+    <testcase name="EmptyTest" file="testsrc/FileDataSSTest.cpp" line="11" status="run" result="completed" time="0.001" timestamp="2026-03-11T04:11:15.494" classname="FileDataSourceSink" />
+    <testcase name="PutTest" file="testsrc/FileDataSSTest.cpp" line="22" status="run" result="completed" time="0.002" timestamp="2026-03-11T04:11:15.496" classname="FileDataSourceSink" />
+    <testcase name="WriteTest" file="testsrc/FileDataSSTest.cpp" line="41" status="run" result="completed" time="0.005" timestamp="2026-03-11T04:11:15.498" classname="FileDataSourceSink" />
   </testsuite>
 </testsuites>
