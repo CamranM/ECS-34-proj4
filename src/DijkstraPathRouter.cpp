@@ -69,7 +69,7 @@ struct CDijkstraPathRouter::SImplementation{
         Previous.resize(DVertices.size(),std::numeric_limits<TVertexID>::max());
 
         Weights[src] = 0; // since the weight between src and src is 0 
-        std::vector<SVertex> visisted_set;
+        std::vector<SVertex> visited_set;
 
         int dest_index;
         while (true) {
