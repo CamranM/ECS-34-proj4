@@ -1,5 +1,5 @@
 #include "DijkstraPathRouter.h"
-
+#include <algorithm>
 
 struct CDijkstraPathRouter::SImplementation{
     struct SVertex;
@@ -123,7 +123,7 @@ struct CDijkstraPathRouter::SImplementation{
     path.insert(path.begin(), dest_index);
     int curr_index = dest_index;
     while (true) {
-        if (Previous[curr_index] == 0) {
+        if (Previous[curr_index] == 0) { // potential error 
             curr_index = Previous[curr_index];
             break;
         }
