@@ -18,9 +18,47 @@ struct CTransportationPlannerCommandLine::SImplementation
     {
     }
 
-    bool ProcessCommands()
-    {
+    bool ProcessCommands(){
+
+        std::vector <char> temp_vector;
+
+        std::vector <char> help_vector;
+      
+        
+        while (true) {
+            std::string word;
+            while (true) {
+                
+                if (Dcmdsrc->Read(temp_vector, 1) == false) {
+                    return true;
+                }
+                if (temp_vector[0] == '\n') {
+                    break;
+                }
+                word = word + temp_vector[0];
+            }
+            std::string temp_word = "";
+            std::vector <std::string> one_command;
+            int i = 0;
+            for (int i:word) {
+                if (word[i] == ' ') {
+                    one_command.push_back(temp_word);
+                    temp_word = "";
+                    break;
+                }
+                temp_word = temp_word + word[i];
+            }
+
+
+            if (one_command[0] == "help") {
+                
+            }
+        }
+        
+        
+
     }
+    
 };
 
 CTransportationPlannerCommandLine::CTransportationPlannerCommandLine(std::shared_ptr<CDataSource> cmdsrc,
