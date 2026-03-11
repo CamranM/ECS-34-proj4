@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2" failures="0" disabled="0" errors="0" time="0." timestamp="2026-03-11T05:56:29.567" name="AllTests">
-  <testsuite name="DSVWriterTest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-03-11T05:56:29.567">
-    <testcase name="EmptyRowTest" file="testsrc/DSVTest.cpp" line="5" status="run" result="completed" time="0." timestamp="2026-03-11T05:56:29.567" classname="DSVWriterTest" />
-    <testcase name="SingleRowTest" file="testsrc/DSVTest.cpp" line="17" status="run" result="completed" time="0." timestamp="2026-03-11T05:56:29.567" classname="DSVWriterTest" />
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0." timestamp="2026-03-11T08:06:53.329" name="AllTests">
+  <testsuite name="DSVWriterTest" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-03-11T08:06:53.329">
+    <testcase name="EmptyRowTest" file="testsrc/DSVTest.cpp" line="5" status="run" result="completed" time="0." timestamp="2026-03-11T08:06:53.329" classname="DSVWriterTest" />
+    <testcase name="SingleRowTest" file="testsrc/DSVTest.cpp" line="17" status="run" result="completed" time="0." timestamp="2026-03-11T08:06:53.329" classname="DSVWriterTest" />
   </testsuite>
 </testsuites>
