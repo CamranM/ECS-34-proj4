@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" disabled="0" errors="0" time="0." timestamp="2026-03-10T22:23:40.619" name="AllTests">
+  <testsuite name="CSVBusSystem" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-03-10T22:23:40.619">
+    <testcase name="SimpleFilesTest" file="testsrc/CSVBusSystemTest.cpp" line="6" status="run" result="completed" time="0." timestamp="2026-03-10T22:23:40.619" classname="CSVBusSystem" />
+    <testcase name="SimpleFilesSwappedTest" file="testsrc/CSVBusSystemTest.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-03-10T22:23:40.620" classname="CSVBusSystem" />
+    <testcase name="MutipleRoutesTest" file="testsrc/CSVBusSystemTest.cpp" line="70" status="run" result="completed" time="0." timestamp="2026-03-10T22:23:40.620" classname="CSVBusSystem" />
+    <testcase name="RootByIndexTest" file="testsrc/CSVBusSystemTest.cpp" line="120" status="run" result="completed" time="0." timestamp="2026-03-10T22:23:40.620" classname="CSVBusSystem" />
+    <testcase name="IndexErrorTest" file="testsrc/CSVBusSystemTest.cpp" line="153" status="run" result="completed" time="0." timestamp="2026-03-10T22:23:40.620" classname="CSVBusSystem" />
+  </testsuite>
+</testsuites>
