@@ -4,7 +4,8 @@
 #include "StreetMap.h"
 #include <vector>
 
-struct SGeographicUtils{
+struct SGeographicUtils
+{
     static double DegreesToRadians(double deg);
     static double RadiansToDegrees(double rad);
     static double Normalize360(double deg);

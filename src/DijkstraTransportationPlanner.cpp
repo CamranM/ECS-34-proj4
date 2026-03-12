@@ -315,21 +315,96 @@ struct CDijkstraTransportationPlanner::SImplementation
 
     bool GetPathDescription(const std::vector<TTripStep> &path, std::vector<std::string> &desc) const
     {
+        return false;
         if (path.size() < 2)
         { // no path
             return false;
         }
-        std::string output = "Start at ";
+
+        desc.clear();
         // get the starting node
-        auto node = std::any_cast<CStreetMap::TNodeID>(DistRouter.GetVertexTag(path[0].second));
-        // SGeographicUtils::ConvertLLToDMS();
-        for (auto &step : path)
+        auto nodeid = std::any_cast<CStreetMap::TNodeID>(DistRouter.GetVertexTag(path[0].second));
+
+        std::string output = "Start at " + SGeographicUtils::ConvertLLToDMS(StreetMap->NodeByID(nodeid)->Location());
+        desc.push_back(output);
+        std::string mode;
+        std::string prev_mode;
+        std::string prev_name;
+
+        double prev_dist;
+        bool same_street = false;
+        auto prev_node = StreetMap->NodeByID(nodeid); // stores the first node of the street
+        for (size_t i = 1; i < path.size(); i++)      // loop through starting at 1, 0 was the starting point
         {
-            break;
+            auto &step = path[i]; // get the TTripstep
+            // set the mode
+            if (step.first == CTransportationPlanner::ETransportationMode::Bike)
+            {
+                mode = "Bike";
+            }
+            else if (step.first == CTransportationPlanner::ETransportationMode::Walk)
+            {
+                mode = "Walk";
+            }
+            else
+            {
+                mode = "Bus";
+            }
+
+            auto node = StreetMap->NodeByID(step.second);
+
+            std::string name = "";
+            std::string describe = "along"; // default is along
+            // put name of street, "" for no noame
+            // if name is same as rev_name and dir is same as prev dir
+            // increment distance
+            // else
+            // samestree = false and push output
+            // rseet prev_dist to 0
+            //
+            // if the node has a name set the name to name, other leave blank
+            if (node->HasAttribute("name"))
+            {
+                name = node->GetAttribute("name");
+            }
+            // if the name is the same, we are on the same street, dont add instructions yet
+            same_street = (node->GetAttribute("name") == prev_name);
+            prev_dist += SGeographicUtils::HaversineDistanceInMiles(prev_node->Location(), node->Location());
+            if (!same_street) // we add the instructions for the prev street and start a new street
+            {
+                if (name == "") // street name unknown
+                {
+                    if (i < path.size() - 1) // not at the last step
+                    {
+                        auto next_node = StreetMap->NodeByID(path[i + 1].second);
+                        if (next_node->HasAttribute("name"))
+                        { // if the next step has a name
+                            name = next_node->GetAttribute("name");
+                            describe = "toward"; // set descriptor to toward
+                        }
+                        else
+                        {
+                            describe = ""; // so it just says "walk for dist"
+                        }
+                        // no name, just walk in direction for distance
+                    }
+                    else // if its the last step, its the end
+                    {
+                        name = "End";
+                    }
+                }
+                // push instructions
+                prev_name = name;
+                std::string direction = SGeographicUtils::BearingToDirection(SGeographicUtils::CalculateBearing(prev_node->Location(), node->Location()));
+                output = mode + " " + direction + " " + name + " for " + std::to_string(prev_dist) + " mi";
+                prev_dist = 0.0;
+            }
+            // same street, just loop again
         }
-        return false;
+        return (!desc.empty());
     }
 };
+
 CDijkstraTransportationPlanner::CDijkstraTransportationPlanner(std::shared_ptr<SConfiguration> config)
 {
     DImplementation = std::make_unique<SImplementation>(config);
