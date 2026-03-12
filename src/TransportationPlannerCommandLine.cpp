@@ -51,6 +51,12 @@ struct CTransportationPlannerCommandLine::SImplementation
         std::string fastest_param_error = "Invalid fastest parameter, see help.\n";
         std::vector <char> fastest_param_error_vector(fastest_param_error.begin(), fastest_param_error.end());
 
+        std::string shortest_error = "Invalid shortest command, see help.\n";
+        std::vector <char> shortest_error_vector(shortest_error.begin(), shortest_error.end());
+
+        std::string shortest_param_error = "Invalid shortest parameter, see help.\n";
+        std::vector <char> shortest_param_error_vector(shortest_param_error.begin(), shortest_param_error.end());
+
 
         while (true) {
             std::string word;
@@ -150,11 +156,135 @@ struct CTransportationPlannerCommandLine::SImplementation
                     }
                     std::vector<CTransportationPlanner::TTripStep> path;
                     double fastest_path = Dplanner->FindFastestPath(i, k, path);
-                    
+                    if (fastest_path == CPathRouter::NoPathExists) {
+                        Doutsink->Write(fastest_param_error_vector);
+                    }
+                    else {
+                        int total_seconds = fastest_path * 3600;
+                        int hours = total_seconds / 3600;
+                        int minutes = (total_seconds % 3600) / 60;
+                        int seconds = total_seconds % 60;
+                        std::string first_part = "Fastest path takes ";
+                        
+                        if (hours > 0) {
+                            if (minutes != 0 && seconds !=0) {
+                                std::string fastest_path_str = std::to_string(hours) + " hr " + std::to_string(minutes) + " min " + std::to_string(seconds) + " sec.";
+                                std::vector <char> first_part_vector(first_part.begin(), first_part.end());
+                            
+                                std::vector <char> fastest_path_vector(fastest_path_str.begin(), fastest_path_str.end());
+                                Doutsink->Write(first_part_vector);
+                                Doutsink->Write(fastest_path_vector);
+                                
+                                Doutsink->Put('\n');
+                            
+                            }
+                            else if (minutes == 0 && seconds !=0) {
+                                std::string fastest_path_str = std::to_string(hours) + " hr " + std::to_string(minutes) + " min "+ std::to_string(seconds) + " sec.";
+                                std::vector <char> first_part_vector(first_part.begin(), first_part.end());
+                            
+                                std::vector <char> fastest_path_vector(fastest_path_str.begin(), fastest_path_str.end());
+                                Doutsink->Write(first_part_vector);
+                                Doutsink->Write(fastest_path_vector);
+                                
+                                Doutsink->Put('\n');
+                            }
+                            else if (minutes !=0 && seconds == 0) {
+                                std::string fastest_path_str = std::to_string(hours) + " hr " + std::to_string(minutes) + " min.";
+                                std::vector <char> first_part_vector(first_part.begin(), first_part.end());
+                            
+                                std::vector <char> fastest_path_vector(fastest_path_str.begin(), fastest_path_str.end());
+                                Doutsink->Write(first_part_vector);
+                                Doutsink->Write(fastest_path_vector);
+                                
+                                Doutsink->Put('\n');
+                            }
+                        }
+
+                        else if (hours == 0 && minutes != 0) {
+                            if (seconds != 0) {
+                                std::string fastest_path_str = std::to_string(minutes) + " min " + std::to_string(seconds) + " sec.";
+                                std::vector <char> first_part_vector(first_part.begin(), first_part.end());
+                                std::vector <char> fastest_path_vector(fastest_path_str.begin(), fastest_path_str.end());
+                                Doutsink->Write(first_part_vector);
+                                Doutsink->Write(fastest_path_vector);
+                                Doutsink->Put('\n');
+                            }
+                            else {
+                                std::string fastest_path_str = std::to_string(minutes) + " min.";
+                                std::vector <char> first_part_vector(first_part.begin(), first_part.end());
+                                std::vector <char> fastest_path_vector(fastest_path_str.begin(), fastest_path_str.end());
+                                Doutsink->Write(first_part_vector);
+                                Doutsink->Write(fastest_path_vector);
+                                Doutsink->Put('\n');
+                            }
+
+                            
+                        }
+                        else {
+                            std::string fastest_path_str = std::to_string(minutes) + " min " + std::to_string(seconds) + " sec.";
+                            std::vector <char> first_part_vector(first_part.begin(), first_part.end());
+                        
+                            std::vector <char> fastest_path_vector(fastest_path_str.begin(), fastest_path_str.end());
+                            Doutsink->Write(first_part_vector);
+                            Doutsink->Write(fastest_path_vector);
+                            
+                            Doutsink->Put('\n');
+                        }
+                        
+                        
+                    }
+
                 }
 
             }
-    }
+
+
+            else if (one_command[0] == "shortest") {
+                if (one_command.size() != 3)  {
+                    Doutsink->Write(shortest_error_vector);
+                }
+                else if (one_command.size() == 3) {
+                    int k;
+                    int i;
+                    try {
+                        i = std::stoi(one_command[1]);
+                        k = std::stoi(one_command[2]);
+                    }
+                    catch (...) {
+                        Doutsink->Write(shortest_param_error_vector);
+                        continue; 
+                    }
+                    std::vector<CTransportationPlanner::TNodeID> path;
+                    double shortest_path = Dplanner->FindShortestPath(i, k, path);
+                    if (shortest_path == CPathRouter::NoPathExists) {
+                        Doutsink->Write(shortest_param_error_vector);
+                    }
+                    else {   
+                        std::ostringstream trailing_zeroes;
+                        trailing_zeroes << shortest_path;
+                        std::string shortest_path_str = trailing_zeroes.str();
+
+
+                        std::string first_part = "Shortest path is ";
+                        std::string last_part = " mi.";
+                        std::vector <char> first_part_vector(first_part.begin(), first_part.end());
+                        std::vector <char> shortest_path_str_vector(shortest_path_str.begin(), shortest_path_str.end());
+                        std::vector <char> last_part_vector(last_part.begin(), last_part.end());
+                        Doutsink->Write(first_part_vector);
+                        Doutsink->Write(shortest_path_str_vector);
+                        Doutsink->Write(last_part_vector);
+
+                        Doutsink->Put('\n');
+                    }
+
+                }
+
+            }
+
+            
+
+
+        }
         
         
 
