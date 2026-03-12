@@ -105,20 +105,21 @@ struct CDijkstraPathRouter::SImplementation
                     min_index = i;
                 }
             }
-            if (dest == min_index)
+            if (dest == min_index && Weights[min_index] != std::numeric_limits<double>::max())
             {
                 dest_index = min_index;
                 break; // found the lowest cost path
+            }
+            else if (min_index == -1)
+            {
+                return NoPathExists; // nothing left
             }
             else if (Weights[min_index] == std::numeric_limits<double>::max())
             {
                 // break; // no path to dest exists
                 return NoPathExists;
             }
-            else if (min_index == -1)
-            {
-                return NoPathExists; // nothing left
-            }
+            
 
             for (int j = 0; j < DVertices[min_index]->DEdges.size(); ++j) {
                 double new_weight = Weights[min_index] + DVertices[min_index]->DEdges[j].first;
