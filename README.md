@@ -23,3 +23,5 @@ https://www.geeksforgeeks.org/cpp/std-find-in-cpp/
 
 https://www.geeksforgeeks.org/cpp/range-based-loop-c/
 
+command line:
+https://stackoverflow.com/questions/8247793/converting-stdstring-to-stdvectorchar
