@@ -8,6 +8,7 @@ struct CTransportationPlannerCommandLine::SImplementation
     std::shared_ptr<CDataSink> Derrsink;
     std::shared_ptr<CDataFactory> Dresults;
     std::shared_ptr<CTransportationPlanner> Dplanner;
+
     SImplementation(std::shared_ptr<CDataSource> cmdsrc,
                     std::shared_ptr<CDataSink> outsink,
                     std::shared_ptr<CDataSink> errsink,
@@ -20,6 +21,10 @@ struct CTransportationPlannerCommandLine::SImplementation
     }
 
     bool ProcessCommands(){
+
+        CTransportationPlanner::TNodeID last_src;
+        CTransportationPlanner::TNodeID last_dest;
+        std::vector<CTransportationPlanner::TTripStep> last_fastest_path;
 
         std::vector <char> temp_vector;
 
@@ -56,6 +61,14 @@ struct CTransportationPlannerCommandLine::SImplementation
 
         std::string shortest_param_error = "Invalid shortest parameter, see help.\n";
         std::vector <char> shortest_param_error_vector(shortest_param_error.begin(), shortest_param_error.end());
+        
+
+        std::string print_error = "No valid path to print, see help.\n";
+        std::vector <char> print_error_vector(print_error.begin(), print_error.end());
+
+        
+        std::string save_error = "No valid path to save, see help.\n";
+        std::vector <char> save_error_vector(save_error.begin(), save_error.end());
 
 
         while (true) {
@@ -90,18 +103,21 @@ struct CTransportationPlannerCommandLine::SImplementation
             else if (one_command[0] == "help") {
                 Doutsink->Write(help_vector);
             }
+
             else if (one_command[0] == "exit") {
                 break;
             }
+
             else if (one_command[0] == "count") {
                 std::string node_count_str = std::to_string(Dplanner->NodeCount()); // need to store in vector and write 
                 std::vector <char> node_count_vector(node_count_str.begin(), node_count_str.end());
                  Doutsink->Write(node_count_vector);
                  Doutsink->Put('\n');
             }
+
             else if (one_command[0] == "node") {
                 if (one_command.size() != 2)  {
-                    Doutsink->Write(node_error_vector);
+                    Derrsink->Write(node_error_vector);
                 }
                 else if (one_command.size() == 2) {
                     int i;
@@ -110,11 +126,11 @@ struct CTransportationPlannerCommandLine::SImplementation
                         i = std::stoi(one_command[1]);
                     }
                     catch (...) {
-                        Doutsink->Write(node_param_error_vector);
+                        Derrsink->Write(node_param_error_vector);
                         continue;
                     }
                     if (i >= Dplanner->NodeCount()|| i < 0) {
-                        Doutsink->Write(node_param_error_vector);
+                        Derrsink->Write(node_param_error_vector);
                     }
                     else {
                         std::shared_ptr<CStreetMap::SNode> node = Dplanner->SortedNodeByIndex(i);
@@ -141,7 +157,7 @@ struct CTransportationPlannerCommandLine::SImplementation
 
             else if (one_command[0] == "fastest") {
                 if (one_command.size() != 3)  {
-                    Doutsink->Write(fastest_error_vector);
+                    Derrsink->Write(fastest_error_vector);
                 }
                 else if (one_command.size() == 3) {
                     int k;
@@ -151,13 +167,13 @@ struct CTransportationPlannerCommandLine::SImplementation
                         k = std::stoi(one_command[2]);
                     }
                     catch (...) {
-                        Doutsink->Write(fastest_param_error_vector);
+                        Derrsink->Write(fastest_param_error_vector);
                         continue; 
                     }
                     std::vector<CTransportationPlanner::TTripStep> path;
                     double fastest_path = Dplanner->FindFastestPath(i, k, path);
                     if (fastest_path == CPathRouter::NoPathExists) {
-                        Doutsink->Write(fastest_param_error_vector);
+                        Derrsink->Write(fastest_param_error_vector);
                     }
                     else {
                         int total_seconds = fastest_path * 3600;
@@ -165,6 +181,12 @@ struct CTransportationPlannerCommandLine::SImplementation
                         int minutes = (total_seconds % 3600) / 60;
                         int seconds = total_seconds % 60;
                         std::string first_part = "Fastest path takes ";
+
+
+                        last_src = i;
+                        last_dest = k;
+                        last_fastest_path = path;
+
                         
                         if (hours > 0) {
                             if (minutes != 0 && seconds !=0) {
@@ -241,7 +263,7 @@ struct CTransportationPlannerCommandLine::SImplementation
 
             else if (one_command[0] == "shortest") {
                 if (one_command.size() != 3)  {
-                    Doutsink->Write(shortest_error_vector);
+                    Derrsink->Write(shortest_error_vector);
                 }
                 else if (one_command.size() == 3) {
                     int k;
@@ -251,13 +273,13 @@ struct CTransportationPlannerCommandLine::SImplementation
                         k = std::stoi(one_command[2]);
                     }
                     catch (...) {
-                        Doutsink->Write(shortest_param_error_vector);
+                        Derrsink->Write(shortest_param_error_vector);
                         continue; 
                     }
                     std::vector<CTransportationPlanner::TNodeID> path;
                     double shortest_path = Dplanner->FindShortestPath(i, k, path);
                     if (shortest_path == CPathRouter::NoPathExists) {
-                        Doutsink->Write(shortest_param_error_vector);
+                        Derrsink->Write(shortest_param_error_vector);
                     }
                     else {   
                         std::ostringstream trailing_zeroes;
@@ -281,7 +303,30 @@ struct CTransportationPlannerCommandLine::SImplementation
 
             }
 
-            
+            else if (one_command[0] == "print") {
+                if (last_fastest_path.empty()) {
+                    Derrsink->Write(print_error_vector);
+                }
+                else {
+                    std::vector <std::string> path_descrption;
+                    Dplanner->GetPathDescription(last_fastest_path, path_descrption);
+
+                    for (auto& element : path_descrption) {
+                        std::vector<char> one_line(element.begin(), element.end());
+                        Doutsink->Write(one_line);
+                        Doutsink->Put('\n');
+                    }
+                }
+            }
+
+            else if (one_command[0] == "save"){
+                if (last_fastest_path.empty()) {
+                    Derrsink->Write(save_error_vector);
+                }
+                else {
+                    
+                }
+            }
 
 
         }

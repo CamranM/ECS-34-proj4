@@ -138,6 +138,9 @@ struct CDijkstraPathRouter::SImplementation
                         Weights[vertex_index] = new_weight;
                         Previous[vertex_index] = min_index;
                     }
+                else {
+                    return NoPathExists;
+                }
             }
         }
             visited_set.push_back(DVertices[min_index]);
