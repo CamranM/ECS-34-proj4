@@ -154,6 +154,9 @@ $(TESTOBJ_DIR)/%.o: $(TESTSRC_DIR)/%.cpp
 $(TESTOBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(TEST_CFLAGS) $(TEST_CPPFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CFLAGS) $(CPPFLAGS) $(DEFINES) $(INCLUDE) -c $< -o $@
+
 .PHONY: directories
 directories:
 	mkdir -p $(BIN_DIR)

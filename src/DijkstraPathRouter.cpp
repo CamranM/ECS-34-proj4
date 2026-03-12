@@ -84,7 +84,7 @@ struct CDijkstraPathRouter::SImplementation
         std::vector<TVertexID> Previous;
         Previous.resize(DVertices.size(), std::numeric_limits<TVertexID>::max());
 
-        Weights[src] = 0; // since the weight between src and src is 0 
+        Weights[src] = 0; // since the weight between src and src is 0
         std::vector<std::shared_ptr<SVertex>> visited_set;
 
         int dest_index;
@@ -154,7 +154,7 @@ struct CDijkstraPathRouter::SImplementation
     path.insert(path.begin(), src);
     // weight part 
 
-    return Weights[dest_index];
+        return Weights[dest_index];
     }
 };
 

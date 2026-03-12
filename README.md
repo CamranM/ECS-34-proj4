@@ -1,4 +1,7 @@
 # ECS-34-proj4
+Names:
+Camran Mori-Khan
+Kaitlyn Hahn
 
 
 ## DijkstraTransportationPlanner
@@ -8,9 +11,9 @@ https://en.cppreference.com/w/cpp/algorithm/sort.html
 
 https://en.cppreference.com/w/cpp/string/basic_string/stol
 - used in OSM to confirm inputs are numbers
-Names:
-Camran Mori-Khan
-Kaitlyn Hahn
+
+https://en.cppreference.com/w/cpp/utility/hash.html
+- hashing for non-standard parameters (used in unordered map)
 
 
 DijkstraPathRouter.cpp:
