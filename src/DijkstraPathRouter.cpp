@@ -73,10 +73,10 @@ struct CDijkstraPathRouter::SImplementation
     double FindShortestPath(TVertexID src, TVertexID dest, std::vector<TVertexID> &path) noexcept
     {
         // building the graph
-        if (src == dest)
-        {
+        if (src == dest) {
             path.push_back(src);
-            return 0.0; // no path for sae src dest
+            return 0.0; // no path for sae src dest 
+
         }
         // running the algorithm
         std::vector<double> Weights;
@@ -120,8 +120,7 @@ struct CDijkstraPathRouter::SImplementation
                 return NoPathExists; // nothing left
             }
 
-            for (int j = 0; j < DVertices[min_index]->DEdges.size(); ++j)
-            {
+            for (int j = 0; j < DVertices[min_index]->DEdges.size(); ++j) {
                 double new_weight = Weights[min_index] + DVertices[min_index]->DEdges[j].first;
                 std::shared_ptr<SVertex> curr_vertex = DVertices[min_index]->DEdges[j].second;
                 int vertex_index = -1;
@@ -133,32 +132,27 @@ struct CDijkstraPathRouter::SImplementation
                         break;
                     }
                 }
-                if (vertex_index != -1)
-                {
+                if (vertex_index != -1) {
                     if (new_weight < Weights[vertex_index])
                     {
                         Weights[vertex_index] = new_weight;
                         Previous[vertex_index] = min_index;
                     }
-                    else
-                    {
-                        return NoPathExists;
-                    }
-                }
+                
             }
+        }
             visited_set.push_back(DVertices[min_index]);
-        }
-
-        // path part
-        // path.insert(path.begin(), dest_index);
-        int curr_index = dest_index;
-        while (curr_index != src)
-        {
-            path.insert(path.begin(), curr_index);
-            curr_index = Previous[curr_index];
-        }
-        path.insert(path.begin(), src);
-        // weight part
+            }
+        
+    // path part  
+    //path.insert(path.begin(), dest_index);
+    int curr_index = dest_index;
+    while (curr_index != src) {
+        path.insert(path.begin(), curr_index);
+        curr_index = Previous[curr_index];
+    }
+    path.insert(path.begin(), src);
+    // weight part 
 
         return Weights[dest_index];
     }
