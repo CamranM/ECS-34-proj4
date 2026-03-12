@@ -1,8 +1,6 @@
 #include "DijkstraPathRouter.h"
 #include <algorithm>
 
-#include <iostream>
-
 struct CDijkstraPathRouter::SImplementation
 {
     struct SVertex;
@@ -26,19 +24,11 @@ struct CDijkstraPathRouter::SImplementation
 
     std::size_t VertexCount() const noexcept
     { // how many vertices exist
-        printf("Listing nodes: \n");
-        // for (auto node : DVertices)
-        // {
-        //     std::cout << "Vertex id: " << node->DTag << "\n"
-        //               << std::endl;
-        // }
         return DVertices.size();
     }
 
     TVertexID AddVertex(std::any tag) noexcept
     { // creates a new vertex and adds the new vertex to dvertices
-        std::cout << "Creating new vertex: " << DVertices.size() << "\n"
-                  << std::endl;
         auto NewVertex = std::make_shared<SVertex>();
         NewVertex->DTag = tag;
         TVertexID NewID = DVertices.size();
@@ -52,7 +42,6 @@ struct CDijkstraPathRouter::SImplementation
         {
             return DVertices[id]->DTag;
         }
-        printf("noway");
         return std::any();
     }
 
@@ -84,7 +73,11 @@ struct CDijkstraPathRouter::SImplementation
     double FindShortestPath(TVertexID src, TVertexID dest, std::vector<TVertexID> &path) noexcept
     {
         // building the graph
-
+        if (src == dest)
+        {
+            path.push_back(src);
+            return 0.0; // no path for sae src dest
+        }
         // running the algorithm
         std::vector<double> Weights;
         Weights.resize(DVertices.size(), std::numeric_limits<double>::max());
@@ -131,7 +124,7 @@ struct CDijkstraPathRouter::SImplementation
             {
                 double new_weight = Weights[min_index] + DVertices[min_index]->DEdges[j].first;
                 std::shared_ptr<SVertex> curr_vertex = DVertices[min_index]->DEdges[j].second;
-                int vertex_index;
+                int vertex_index = -1;
                 for (int k = 0; k < VertexCount(); ++k)
                 {
                     if (DVertices[k] == curr_vertex)
@@ -140,29 +133,27 @@ struct CDijkstraPathRouter::SImplementation
                         break;
                     }
                 }
-                if (new_weight < Weights[vertex_index])
+                if (vertex_index != -1)
                 {
-                    Weights[vertex_index] = new_weight;
-                    Previous[vertex_index] = min_index;
+                    if (new_weight < Weights[vertex_index])
+                    {
+                        Weights[vertex_index] = new_weight;
+                        Previous[vertex_index] = min_index;
+                    }
                 }
             }
             visited_set.push_back(DVertices[min_index]);
         }
 
         // path part
-        path.insert(path.begin(), dest_index);
+        // path.insert(path.begin(), dest_index);
         int curr_index = dest_index;
-        while (true)
+        while (curr_index != src)
         {
-            if (Previous[curr_index] == 0)
-            { // potential error
-                curr_index = Previous[curr_index];
-                break;
-            }
-            path.insert(path.begin(), Previous[curr_index]);
+            path.insert(path.begin(), curr_index);
             curr_index = Previous[curr_index];
         }
-        path.insert(path.begin(), curr_index);
+        path.insert(path.begin(), src);
         // weight part
 
         return Weights[dest_index];

@@ -161,7 +161,7 @@ TEST(CSVOSMTransporationPlanner, FastestPathTest)
     auto StreetMap = std::make_shared<COpenStreetMap>(XMLReader);
     auto BusSystem = std::make_shared<CCSVBusSystem>(CSVReaderStops, CSVReaderRoutes);
     auto Config = std::make_shared<STransportationPlannerConfig>(StreetMap, BusSystem);
-    printf("config now");
+
     CDijkstraTransportationPlanner Planner(Config);
     std::vector<CTransportationPlanner::TTripStep> BusFastestPath, ExpectedBusFastestPath = {{CTransportationPlanner::ETransportationMode::Walk, 1},
                                                                                              {CTransportationPlanner::ETransportationMode::Bus, 2},
@@ -171,13 +171,12 @@ TEST(CSVOSMTransporationPlanner, FastestPathTest)
     double ExpectedBusTime = ExpectedBusDistance / 20.0 + (60.0 / 3600.0);
     EXPECT_EQ(Planner.FindFastestPath(1, 3, BusFastestPath), ExpectedBusTime);
 
-    printf("debugging here");
     EXPECT_EQ(BusFastestPath, ExpectedBusFastestPath);
     std::vector<CTransportationPlanner::TTripStep> BikeFastestPath, ExpectedBikeFastestPath = {{CTransportationPlanner::ETransportationMode::Bike, 1},
                                                                                                {CTransportationPlanner::ETransportationMode::Bike, 4}};
     double ExpectedBikeDistance = SGeographicUtils::HaversineDistanceInMiles(CStreetMap::SLocation(38.5, -121.7), CStreetMap::SLocation(38.5, -121.8));
     double ExpectedBikeTime = ExpectedBikeDistance / 8.0;
-    printf("biking time tester");
+
     EXPECT_EQ(Planner.FindFastestPath(1, 4, BikeFastestPath), ExpectedBikeTime);
     EXPECT_EQ(BikeFastestPath, ExpectedBikeFastestPath);
 }

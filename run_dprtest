@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2" failures="0" disabled="0" errors="0" time="0." timestamp="2026-03-11T22:44:23.665" name="AllTests">
-  <testsuite name="DijkstraPathRouter" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-03-11T22:44:23.665">
-    <testcase name="SimpleTest" file="testsrc/DijkstraPathRouterTest.cpp" line="4" status="run" result="completed" time="0." timestamp="2026-03-11T22:44:23.665" classname="DijkstraPathRouter" />
-    <testcase name="ShortestPath" file="testsrc/DijkstraPathRouterTest.cpp" line="15" status="run" result="completed" time="0." timestamp="2026-03-11T22:44:23.665" classname="DijkstraPathRouter" />
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0." timestamp="2026-03-11T23:37:50.198" name="AllTests">
+  <testsuite name="DijkstraPathRouter" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-03-11T23:37:50.198">
+    <testcase name="SimpleTest" file="testsrc/DijkstraPathRouterTest.cpp" line="4" status="run" result="completed" time="0." timestamp="2026-03-11T23:37:50.198" classname="DijkstraPathRouter" />
+    <testcase name="ShortestPath" file="testsrc/DijkstraPathRouterTest.cpp" line="15" status="run" result="completed" time="0." timestamp="2026-03-11T23:37:50.198" classname="DijkstraPathRouter" />
   </testsuite>
 </testsuites>
