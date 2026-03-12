@@ -1,5 +1,5 @@
 #include "TransportationPlannerCommandLine.h"
-#include "GeographicUtils.cpp"
+#include "GeographicUtils.h"
 
 struct CTransportationPlannerCommandLine::SImplementation
 {
@@ -35,7 +35,7 @@ struct CTransportationPlannerCommandLine::SImplementation
         std::vector <char> temp_vector;
 
         std::string help = 
-                            "------------------------------------------------------------------------\n"
+                            " ------------------------------------------------------------------------\n"
                             "help     Display this help menu\n"
                             "exit     Exit the program\n"
                             "count    Output the number of nodes in the map\n"
@@ -83,6 +83,7 @@ struct CTransportationPlannerCommandLine::SImplementation
         while (true) {
             std::string word;
             Doutsink->Put('>');
+            Doutsink->Put(' ');
             while (true) {
                 
                 if (Dcmdsrc->Read(temp_vector, 1) == false) {
@@ -128,8 +129,11 @@ struct CTransportationPlannerCommandLine::SImplementation
             else if (one_command[0] == "count") {
                 std::string node_count_str = std::to_string(Dplanner->NodeCount()); // need to store in vector and write 
                 std::vector <char> node_count_vector(node_count_str.begin(), node_count_str.end());
-                 Doutsink->Write(node_count_vector);
-                 Doutsink->Put('\n');
+                std::string count = " nodes";
+                std::vector <char> count_vec(count.begin(), count.end());
+                Doutsink->Write(node_count_vector);
+                Doutsink->Write(count_vec);
+                Doutsink->Put('\n');
             }
 
             else if (one_command[0] == "node") {
@@ -376,7 +380,7 @@ struct CTransportationPlannerCommandLine::SImplementation
             else {
                 std::string error_message = "Unknown command \"" + one_command[0] + "\" type help for help.\n";
                 std::vector<char> error_message_vector(error_message.begin(),error_message.end());
-                Doutsink->Write(error_message_vector);
+                Derrsink->Write(error_message_vector);
             }
 
 

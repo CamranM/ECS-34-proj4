@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="9" failures="2" disabled="0" errors="0" time="0." timestamp="2026-03-12T03:48:35.280" name="AllTests">
+  <testsuite name="TransporationPlannerCommandLine" tests="9" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-03-12T03:48:35.281">
+    <testcase name="SimpleTest" file="testsrc/TPCommandLineTest.cpp" line="31" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine" />
+    <testcase name="HelpTest" file="testsrc/TPCommandLineTest.cpp" line="45" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine">
+      <failure message="testsrc/TPCommandLineTest.cpp:56&#x0A;Expected equality of these values:&#x0A;  OutputSink-&gt;String()&#x0A;    Which is: &quot;&gt;  ------------------------------------------------------------------------\nhelp     Display this help menu\nexit     Exit the program\ncount    Output the number of nodes in the map\nnode     Syntax \&quot;node [0, count)\&quot; \n         Will output node ID and Lat/Lon for node\nfastest  Syntax \&quot;fastest start end\&quot; \n         Calculates the time for fastest path from start to end\nshortest Syntax \&quot;shortest start end\&quot; \n         Calculates the distance for the shortest path from start to end\nsave     Saves the last calculated path to file\nprint    Prints the steps for the last calculated path\n&gt; &quot;&#x0A;  &quot;&gt; &quot; &quot;------------------------------------------------------------------------\n&quot; &quot;help     Display this help menu\n&quot; &quot;exit     Exit the program\n&quot; &quot;count    Output the number of nodes in the map\n&quot; &quot;node     Syntax \&quot;node [0, count)\&quot; \n&quot; &quot;         Will output node ID and Lat/Lon for node\n&quot; &quot;fastest  Syntax \&quot;fastest start end\&quot; \n&quot; &quot;         Calculates the time for fastest path from start to end\n&quot; &quot;shortest Syntax \&quot;shortest start end\&quot; \n&quot; &quot;         Calculates the distance for the shortest path from start to end\n&quot; &quot;save     Saves the last calculated path to file\n&quot; &quot;print    Prints the steps for the last calculated path\n&quot; &quot;&gt; &quot;&#x0A;    Which is: &quot;&gt; ------------------------------------------------------------------------\nhelp     Display this help menu\nexit     Exit the program\ncount    Output the number of nodes in the map\nnode     Syntax \&quot;node [0, count)\&quot; \n         Will output node ID and Lat/Lon for node\nfastest  Syntax \&quot;fastest start end\&quot; \n         Calculates the time for fastest path from start to end\nshortest Syntax \&quot;shortest start end\&quot; \n         Calculates the distance for the shortest path from start to end\nsave     Saves the last calculated path to file\nprint    Prints the steps for the last calculated path\n&gt; &quot;&#x0A;With diff:&#x0A;@@ -1,3 +1,3 @@&#x0A;-&gt;  ------------------------------------------------------------------------&#x0A;+&gt; ------------------------------------------------------------------------&#x0A; help     Display this help menu&#x0A; exit     Exit the program&#x0A;&#x0A;" type=""><![CDATA[testsrc/TPCommandLineTest.cpp:56
+Expected equality of these values:
+  OutputSink->String()
+    Which is: ">  ------------------------------------------------------------------------\nhelp     Display this help menu\nexit     Exit the program\ncount    Output the number of nodes in the map\nnode     Syntax \"node [0, count)\" \n         Will output node ID and Lat/Lon for node\nfastest  Syntax \"fastest start end\" \n         Calculates the time for fastest path from start to end\nshortest Syntax \"shortest start end\" \n         Calculates the distance for the shortest path from start to end\nsave     Saves the last calculated path to file\nprint    Prints the steps for the last calculated path\n> "
+  "> " "------------------------------------------------------------------------\n" "help     Display this help menu\n" "exit     Exit the program\n" "count    Output the number of nodes in the map\n" "node     Syntax \"node [0, count)\" \n" "         Will output node ID and Lat/Lon for node\n" "fastest  Syntax \"fastest start end\" \n" "         Calculates the time for fastest path from start to end\n" "shortest Syntax \"shortest start end\" \n" "         Calculates the distance for the shortest path from start to end\n" "save     Saves the last calculated path to file\n" "print    Prints the steps for the last calculated path\n" "> "
+    Which is: "> ------------------------------------------------------------------------\nhelp     Display this help menu\nexit     Exit the program\ncount    Output the number of nodes in the map\nnode     Syntax \"node [0, count)\" \n         Will output node ID and Lat/Lon for node\nfastest  Syntax \"fastest start end\" \n         Calculates the time for fastest path from start to end\nshortest Syntax \"shortest start end\" \n         Calculates the distance for the shortest path from start to end\nsave     Saves the last calculated path to file\nprint    Prints the steps for the last calculated path\n> "
+With diff:
+@@ -1,3 +1,3 @@
+->  ------------------------------------------------------------------------
++> ------------------------------------------------------------------------
+ help     Display this help menu
+ exit     Exit the program
+
+]]></failure>
+    </testcase>
+    <testcase name="CountTest" file="testsrc/TPCommandLineTest.cpp" line="73" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine" />
+    <testcase name="NodeTest" file="testsrc/TPCommandLineTest.cpp" line="94" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine" />
+    <testcase name="ShortestTest" file="testsrc/TPCommandLineTest.cpp" line="123" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine" />
+    <testcase name="FastestTest" file="testsrc/TPCommandLineTest.cpp" line="145" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine" />
+    <testcase name="PrintTest" file="testsrc/TPCommandLineTest.cpp" line="168" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine" />
+    <testcase name="SaveTest" file="testsrc/TPCommandLineTest.cpp" line="209" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine">
+      <failure message="testsrc/TPCommandLineTest.cpp:239&#x0A;Expected equality of these values:&#x0A;  SaveSink-&gt;String()&#x0A;    Which is: &quot;mode,node_id\nWalk,10\nWalk,9\nBus,8\nBus,7\nWalk,6\n&quot;&#x0A;  &quot;mode,node_id\n&quot; &quot;Walk,10\n&quot; &quot;Walk,9\n&quot; &quot;Bus,8\n&quot; &quot;Bus,7\n&quot; &quot;Walk,6&quot;&#x0A;    Which is: &quot;mode,node_id\nWalk,10\nWalk,9\nBus,8\nBus,7\nWalk,6&quot;&#x0A;With diff:&#x0A;@@ -4,3 +4,3 @@&#x0A; Bus,8&#x0A; Bus,7&#x0A;-Walk,6\n&#x0A;+Walk,6&#x0A;&#x0A;" type=""><![CDATA[testsrc/TPCommandLineTest.cpp:239
+Expected equality of these values:
+  SaveSink->String()
+    Which is: "mode,node_id\nWalk,10\nWalk,9\nBus,8\nBus,7\nWalk,6\n"
+  "mode,node_id\n" "Walk,10\n" "Walk,9\n" "Bus,8\n" "Bus,7\n" "Walk,6"
+    Which is: "mode,node_id\nWalk,10\nWalk,9\nBus,8\nBus,7\nWalk,6"
+With diff:
+@@ -4,3 +4,3 @@
+ Bus,8
+ Bus,7
+-Walk,6\n
++Walk,6
+
+]]></failure>
+    </testcase>
+    <testcase name="ErrorTest" file="testsrc/TPCommandLineTest.cpp" line="248" status="run" result="completed" time="0." timestamp="2026-03-12T03:48:35.281" classname="TransporationPlannerCommandLine" />
+  </testsuite>
+</testsuites>
