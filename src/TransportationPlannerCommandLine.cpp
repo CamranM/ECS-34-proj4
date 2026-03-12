@@ -15,6 +15,11 @@ struct CTransportationPlannerCommandLine::SImplementation
                     std::shared_ptr<CDataFactory> results,
                     std::shared_ptr<CTransportationPlanner> planner)
     {
+    Dcmdsrc = cmdsrc;
+    Doutsink = outsink;
+    Derrsink = errsink;
+    Dresults = results;
+    Dplanner = planner;
     }
     ~SImplementation()
     {
@@ -25,6 +30,7 @@ struct CTransportationPlannerCommandLine::SImplementation
         CTransportationPlanner::TNodeID last_src;
         CTransportationPlanner::TNodeID last_dest;
         std::vector<CTransportationPlanner::TTripStep> last_fastest_path;
+        double last_time_hr;
 
         std::vector <char> temp_vector;
 
@@ -69,12 +75,16 @@ struct CTransportationPlannerCommandLine::SImplementation
         
         std::string save_error = "No valid path to save, see help.\n";
         std::vector <char> save_error_vector(save_error.begin(), save_error.end());
+        
+        std::string unknown_error = "Unknown command \"foo\" type help for help.\n";
+        std::vector <char> unknown_error_vector(unknown_error.begin(), unknown_error.end());
 
 
         while (true) {
             std::string word;
+            Doutsink->Put('>');
             while (true) {
-                Doutsink->Put('>');
+                
                 if (Dcmdsrc->Read(temp_vector, 1) == false) {
                     return true; //everything read 
                 }
@@ -85,20 +95,27 @@ struct CTransportationPlannerCommandLine::SImplementation
             }
             std::string temp_word = "";
             std::vector <std::string> one_command;
-            int i = 0;
-            for (char c:word) {
-                if (c == ' ') {
-                    one_command.push_back(temp_word);
-                    temp_word = "";
-                    
+            //int i = 0;
+            for (char c : word) {
+                    if (c == ' ') {
+                        if (!temp_word.empty()) {
+                            one_command.push_back(temp_word);
+                            temp_word.clear();
+                        }
+                    }
+                    else {
+                        temp_word += c;
+                    }
                 }
-                temp_word = temp_word + word[c];
-            }
+
+                if (!temp_word.empty()) {
+                    one_command.push_back(temp_word);
+                    }
 
 
 
             if (one_command.empty()) {
-                break;
+                continue;
             }
             else if (one_command[0] == "help") {
                 Doutsink->Write(help_vector);
@@ -186,6 +203,7 @@ struct CTransportationPlannerCommandLine::SImplementation
                         last_src = i;
                         last_dest = k;
                         last_fastest_path = path;
+                        last_time_hr = fastest_path;
 
                         
                         if (hours > 0) {
@@ -324,15 +342,48 @@ struct CTransportationPlannerCommandLine::SImplementation
                     Derrsink->Write(save_error_vector);
                 }
                 else {
-                    
+                    std::string filename = std::to_string(last_src) + "_" + std::to_string(last_dest) + "_" + std::to_string(last_time_hr) + "hr.csv";
+                    auto Sink = Dresults->CreateSink(filename);
+                    std::string first_line = "mode,node_id\n";
+                    std::vector<char> first_line_vector(first_line.begin(),first_line.end());
+                    Sink->Write(first_line_vector);
+
+                    for (auto line : last_fastest_path) {
+                        std::string trans_mode;
+                        if (line.first == CTransportationPlanner::ETransportationMode::Bike) {
+                            trans_mode = "Bike";
+                        }
+                        else if (line.first == CTransportationPlanner::ETransportationMode::Walk) {
+                            trans_mode = "Walk";
+                        }
+                        else if (line.first == CTransportationPlanner::ETransportationMode::Bus) {
+                            trans_mode = "Bus";
+                        }
+
+                        std::string one_line = trans_mode + "," + std::to_string(line.second) + "\n";
+                        std::vector<char> one_line_vector(one_line.begin(),one_line.end());
+
+
+                        Sink->Write(one_line_vector);
+                    }
+                    std::string conf =  "Path saved to <results>/" + filename + "\n";
+                    std::vector<char> conf_vector(conf.begin(),conf.end());
+                    Doutsink->Write(conf_vector);
+
+
                 }
+            }
+            else {
+                std::string error_message = "Unknown command \"" + one_command[0] + "\" type help for help.\n";
+                std::vector<char> error_message_vector(error_message.begin(),error_message.end());
+                Doutsink->Write(error_message_vector);
             }
 
 
         }
         
         
-
+        return true;
     }
     
 };
