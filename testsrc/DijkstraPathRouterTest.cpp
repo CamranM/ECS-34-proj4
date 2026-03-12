@@ -171,3 +171,42 @@ TEST(DijkstraPathRouter, MultipleCorrect)
     // hopefully this works as expected
     EXPECT_TRUE(Path == ExpectedPath || Path == ExpectedPath2);
 }
+
+TEST(DijkstraPathRouter, ComplicatedReplacement)
+{
+    CDijkstraPathRouter PathRouter;
+
+    auto VertexA = PathRouter.AddVertex(std::string("A"));
+    auto VertexB = PathRouter.AddVertex(std::string("B"));
+    auto VertexC = PathRouter.AddVertex(std::string("C"));
+    auto VertexD = PathRouter.AddVertex(std::string("D"));
+    auto VertexE = PathRouter.AddVertex(std::string("E"));
+    auto VertexF = PathRouter.AddVertex(std::string("F"));
+
+    EXPECT_EQ(PathRouter.VertexCount(), 6);
+    EXPECT_TRUE(PathRouter.AddEdge(VertexA, VertexB, 1.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexB, VertexC, 3.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexC, VertexD, 3.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexC, VertexF, 5.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexD, VertexF, 7.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexE, VertexD, 10.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexF, VertexE, 2.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexE, VertexA, 2.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexF, VertexA, 4.0));
+    EXPECT_TRUE(PathRouter.AddEdge(VertexF, VertexC, 5.0));
+
+    std::vector<CPathRouter::TVertexID> ogPath;
+    EXPECT_EQ(PathRouter.FindShortestPath(VertexE, VertexD, ogPath), 9.0);
+    std::vector<CPathRouter::TVertexID> ogExpectedPath{VertexE, VertexA, VertexB, VertexC, VertexD};
+    EXPECT_EQ(ogPath, ogExpectedPath);
+
+    std::vector<CPathRouter::TVertexID> Path;
+    EXPECT_EQ(PathRouter.FindShortestPath(VertexE, VertexC, Path), 6.0);
+    std::vector<CPathRouter::TVertexID> ExpectedPath{VertexE, VertexA, VertexB, VertexC};
+    EXPECT_EQ(Path, ExpectedPath);
+
+    std::vector<CPathRouter::TVertexID> newPath;
+    EXPECT_EQ(PathRouter.FindShortestPath(VertexE, VertexF, newPath), 11.0);
+    std::vector<CPathRouter::TVertexID> ExpectedPath1{VertexE, VertexA, VertexB, VertexC, VertexF};
+    EXPECT_EQ(newPath, ExpectedPath1);
+}
